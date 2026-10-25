@@ -1,1 +1,52 @@
-apiKey: "PASTE_YOUR_API_KEY_HERE",
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaudhry Cab - CCab Basirpur</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#f5f7fb}
+.header{background:#111;color:#fff;padding:18px;text-align:center}
+.header h1{font-size:22px} .header p{color:#ffd600;margin-top:4px}
+.container{max-width:500px;margin:20px auto;padding:0 16px}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+input,select,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:1px solid #ddd;font-size:16px}
+button{background:#111;color:#fff;font-weight:700;border:none}
+.success{background:#e7f7e9;color:#166a24;padding:12px;border-radius:10px;display:none;text-align:center;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="header"><h1>Chaudhry Cab - CCab</h1><p>Basirpur | Okara | Sialkot - 24/7 Service</p></div>
+<div class="container"><div class="card">
+<h2 style="text-align:center">🚕 Ride Book Karen</h2>
+<input id="name" placeholder="Aapka Naam">
+<input id="phone" placeholder="Phone 03XX..." type="tel">
+<select id="from"><option>Basirpur</option><option>Okara</option><option>Sialkot</option><option>Lahore</option></select>
+<select id="to"><option>Sialkot</option><option>Basirpur</option><option>Lahore</option><option>Sialkot Airport</option></select>
+<input id="date" type="date">
+<select id="car"><option>Mini Car</option><option>Corolla</option><option>Hiace Van</option></select>
+<button id="bookBtn">Book Now - Confirm</button>
+<div id="msg" class="success">✅ Booking save ho gayi! Hum jald rabta karenge.</div>
+</div></div>
+<script type="module">
+import { saveRide } from "./firebase.js";
+document.getElementById('bookBtn').addEventListener('click', async ()=>{
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  if(!name||!phone){alert('Naam aur Phone likhna zaruri hai');return;}
+  const from=document.getElementById('from').value;
+  const to=document.getElementById('to').value;
+  const date=document.getElementById('date').value;
+  const car=document.getElementById('car').value;
+  const btn=document.getElementById('bookBtn');
+  btn.textContent='Saving...'; btn.disabled=true;
+  try{
+    await saveRide({name,phone,from,to,date,car,status:'pending'});
+    document.getElementById('msg').style.display='block';
+    btn.textContent='Booked ✅';
+  }catch(e){alert(e.message); btn.textContent='Book Now'; btn.disabled=false;}
+});
+</script>
+</body>
+</html>
