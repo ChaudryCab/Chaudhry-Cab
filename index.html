@@ -3,137 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab</title>
+<title>Chaudhry Cab - CCab | Basirpur Complete Villages</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#f5f7f5}
 .header{background:#111;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
-.header img{width:50px;height:50px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid #16a34a}
-.hero{position:relative;width:100%;height:340px;overflow:hidden;background:#000}
-.hero img{width:100%;height:100%;object-fit:cover}
-.hero-text{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.9));color:#fff}
-.container{max-width:680px;margin:auto}
+.logo-circle{width:50px;height:50px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #fff;flex-shrink:0}
+.banner{width:100%;height:280px;background:linear-gradient(135deg,#111 0%,#1a2e1a 100%);display:flex;align-items:center;justify-content:space-between;padding:20px;color:#fff}
+.container{max-width:700px;margin:auto}
 .box{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.07)}
-label{font-size:13px;font-weight:700;display:block;margin-top:10px}
-input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;margin-top:5px;font-size:15px}
-.btn{display:block;background:#16a34a;color:#fff;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;margin-top:12px;font-size:16px;border:0;width:100%;cursor:pointer}
+.btn{width:100%;padding:14px;background:#16a34a;color:#fff;border:0;border-radius:12px;font-weight:800;font-size:16px;margin-top:12px;cursor:pointer;display:block;text-align:center;text-decoration:none}
 .btn-black{background:#111}.btn-blue{background:#0ea5e9}
-#map{width:100%;height:360px;border-radius:12px}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer}
+#map{width:100%;height:400px;border-radius:12px}
+.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer;font-size:14px}
 .tab.active{background:#111;color:#fff}
 .hidden{display:none !important}
-.sticky{position:sticky;bottom:0;background:#fff;padding:10px;display:flex;gap:8px;box-shadow:0 -2px 12px rgba(0,0,0,.15);z-index:50}
+.village{display:inline-block;font-size:10px;background:#dcfce7;color:#14532d;padding:4px 8px;border-radius:20px;margin:2px;border:1px solid #bbf7d0}
+select{max-height:200px}
 </style>
 </head>
 <body>
 <div class="container">
 
 <div class="header">
-<img src="IMG-20261025-WA0751.jpg" onerror="this.src='https://via.placeholder.com/100?text=CCab'">
-<div><div style="font-weight:900">Chaudhry Cab - CCab</div><div style="font-size:11px">Basirpur | Hujra | Depalpur | Mandi | Haveli | Okara | Sahiwal | Lahore</div></div>
+<div class="logo-circle">CCab</div>
+<div><div style="font-weight:900">Chaudhry Cab - CCab</div><div style="font-size:10px">Basirpur Complete - تمام دیہات و محلے شامل</div></div>
 </div>
 
-<!-- ===== بینر یہاں ہے - اب یہ والا بینر لگے گا ===== -->
-<div class="hero">
-<img src="banner.jpg" onerror="this.src='IMG-20261025-WA0751.jpg'" alt="CCab Banner">
-<div class="hero-text"><h2 style="margin:0">بصیرپور کا اپنا کیب</h2><p style="margin:4px 0 0;font-size:13px">مسافر اپنی مرضی کا کرایہ لگائے - InDrive کی طرح</p></div>
+<div class="banner">
+<div>
+<h1 style="margin:0;font-size:22px">Basirpur & All Villages<br><span style="color:#4ade80">CCab Taxi Service</span></h1>
+<p style="font-size:11px;opacity:.8;margin-top:6px">آپ کے گاؤں محلے سے ہر جگہ - مسافر اپنی مرضی کا کرایہ لگائے</p>
+</div>
+<div style="font-size:50px">🚖</div>
 </div>
 
 <div class="box">
-<div class="tabs">
-<div id="tabPassenger" class="tab active" onclick="showTab('passenger')">👤 مسافر بکنگ</div>
-<div id="tabDriver" class="tab" onclick="showTab('driver')">🚗 ڈرائیور بنیں</div>
+<div style="display:flex;gap:8px">
+<div id="tabP" class="tab active" onclick="showTab('passenger')">👤 مسافر بکنگ</div>
+<div id="tabD" class="tab" onclick="showTab('driver')">🚗 ڈرائیور بنیں</div>
 </div>
 
-<!-- PASSENGER - SIRF APNI MARZI KA RATE -->
-<div id="passenger">
-<label>نام</label><input id="pName" placeholder="احمد">
-<label>کہاں سے</label>
-<select id="pFrom"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option><option>Mandi Ahmad Abad</option><option>Haveli Lakha</option><option>Okara</option><option>Sahiwal</option><option>Lahore</option></select>
-<label>کہاں جانا ہے</label>
-<select id="pTo"><option>Lahore</option><option>Okara</option><option>Sahiwal</option><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option></select>
-
-<label style="margin-top:14px;font-size:15px">💰 آپ اپنی آفر لگائیں: <b id="fareShow" style="color:#16a34a;font-size:22px">Rs 2500</b></label>
-<input type="range" id="fareRange" min="500" max="10000" step="100" value="2500" style="width:100%;accent-color:#16a34a;height:8px">
-<div style="display:flex;justify-content:space-between;font-size:11px;color:#666"><span>Rs 500</span><span>Rs 10000</span></div>
-<input type="number" id="fareNumber" value="2500" style="text-align:center;font-weight:800;margin-top:8px;font-size:18px;border:2px solid #16a34a">
-<p style="font-size:12px;color:#666;text-align:center;margin:6px 0 0">سلائیڈر سے کم زیادہ کریں، ڈرائیور آپ کی آفر دیکھ کر رابطہ کرے گا</p>
-
-<button class="btn" onclick="bookPassenger()">📲 اس آفر پر بکنگ بھیجیں</button>
-<button class="btn btn-blue" onclick="bookWithLocation()">📡 لائیو لوکیشن کے ساتھ بکنگ</button>
-<p id="locStatus" style="text-align:center;color:#16a34a;font-weight:700;font-size:13px"></p>
-</div>
-
-<!-- DRIVER -->
-<div id="driver" class="hidden">
-<label>ڈرائیور کا نام *</label><input id="dName" placeholder="پورا نام">
-<label>فون نمبر *</label><input id="dPhone" placeholder="0300-1234567">
-<label>گاڑی</label><select id="dCar"><option>Mehran / Alto</option><option>Cultus / WagonR</option><option>Corolla / City</option><option>APV / Carry</option><option>Bike</option></select>
-<label>علاقہ</label><select id="dArea"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option><option>Mandi Ahmad Abad</option><option>Haveli Lakha</option><option>Okara</option><option>Sahiwal</option></select>
-<label>لائسنس نمبر</label><input id="dLicense" placeholder="DL-12345">
-<button class="btn btn-black" onclick="registerDriver()">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
-</div>
-</div>
-
-<div class="box"><h3>📍 سروس ایریا</h3><div id="map"></div></div>
-<div style="height:90px"></div>
-</div>
-
-<div class="sticky container" style="max-width:680px;margin:auto">
-<a class="btn" onclick="showTab('passenger');window.scrollTo(0,350)" style="background:#16a34a">👤 مسافر</a>
-<a class="btn btn-black" onclick="showTab('driver');window.scrollTo(0,350)">🚗 ڈرائیور</a>
-</div>
-
-<script>
-function showTab(which){
-  document.getElementById('passenger').classList.add('hidden');
-  document.getElementById('driver').classList.add('hidden');
-  document.getElementById('tabPassenger').classList.remove('active');
-  document.getElementById('tabDriver').classList.remove('active');
-  document.getElementById(which).classList.remove('hidden');
-  document.getElementById('tab'+which.charAt(0).toUpperCase()+which.slice(1)).classList.add('active');
-}
-let fare=2500;
-const fareRange=document.getElementById('fareRange');
-const fareNumber=document.getElementById('fareNumber');
-const fareShow=document.getElementById('fareShow');
-function syncFare(v){fare=parseInt(v)||500;fareRange.value=fare;fareNumber.value=fare;fareShow.innerText="Rs "+fare;}
-fareRange.oninput=e=>syncFare(e.target.value);
-fareNumber.oninput=e=>syncFare(e.target.value);
-function bookPassenger(){
-  let name=document.getElementById('pName').value||"Passenger";
-  let from=document.getElementById('pFrom').value;
-  let to=document.getElementById('pTo').value;
-  let msg=`Salam CCab!\n\n*Passenger Booking*\nName: ${name}\nFrom: ${from}\nTo: ${to}\nMeri Offer: Rs ${fare}\n\nIs fare par ride chahiye`;
-  window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
-}
-function bookWithLocation(){
-  let s=document.getElementById('locStatus');s.innerText="لوکیشن لی جا رہی ہے...";
-  navigator.geolocation.getCurrentPosition(pos=>{
-    let link=`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-    s.innerText=`✅ لوکیشن مل گئی`;
-    let name=document.getElementById('pName').value||"Passenger";
-    let from=document.getElementById('pFrom').value;
-    let to=document.getElementById('pTo').value;
-    let msg=`Salam CCab!\n\nName: ${name}\nFrom: ${from}\nTo: ${to}\nMeri Offer: Rs ${fare}\nLocation: ${link}`;
-    window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
-  },()=>{s.innerText="Location Allow کریں";});
-}
-function registerDriver(){
-  let name=document.getElementById('dName').value;
-  let phone=document.getElementById('dPhone').value;
-  if(!name||!phone){alert("براہ مہربانی نام اور فون نمبر لکھیں");return;}
-  let car=document.getElementById('dCar').value;
-  let area=document.getElementById('dArea').value;
-  let license=document.getElementById('dLicense').value;
-  let msg=`*Driver Registration - CCab*\n\nName: ${name}\nPhone: ${phone}\nCar: ${car}\nArea: ${area}\nLicense: ${license}`;
-  window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
-}
-var map=L.map('map').setView([30.58,73.80],10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-[[30.5790,73.8367,"Basirpur"],[30.7324,73.8617,"Hujra"],[30.6728,73.6537,"Depalpur"],[30.5446,73.9403,"Mandi Ahmad Abad"],[30.45,73.6988,"Haveli Lakha"],[30.81,73.4450,"Okara"],[30.6667,73.10,"Sahiwal"],[31.5497,74.3436,"Lahore"]].forEach(p=>{L.marker([p[0],p[1]]).addTo(map).bindPopup(p[2]);});
-</script>
-</body>
-</html>
+<div id="passenger" style="margin-top:12px">
+<label>نام</label><input id="pName" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;margin-top:5px" placeholder="احمد">
+<label style="margin-top:10px;display:block;font-weight:700">کہاں سے - آپ کا گاؤں / محلہ / چوک</label>
+<select id="pFrom" style="width:100%;padding:12px;border-radius:10px;margin-top:5px">
+<option>Basirpur بصیرپور</option>
+<option>Ganda Singh گنڈا سنگھ</option>
+<option>Tahir Kalan طاہرکلاں</option>
+<option>Wanan Wala ونانوالہ</option>
+<option>Muhammad Nagar محمد نگر</option>
+<option>Tahir Khurd طاہر خورد</option>
+<option>Kot Sher Khan کوٹ شیر خان</option>
+<option>Chak 8/D چک 8 ڈی</option>
+<option>Kalasan Hameed کلاسن حمید</option>
+<option>Nihal Mahar نہال مہار</option>
+<option>Rohela Tejeka روہیلہ تیجیکا</option>
+<option>Ameera Tejeka امیرا تیجیکا</option>
+<option>Qasim Ke قاسم کے</option>
+<option>Mahar Daim Ke Mahar مہار دائم کے مہار</option>
+<option>Azam Chowk اعظم چوک</option>
+<option>Qari Chowk قاری چوک</option>
+<option>Chah Chowki Wala چاہ چوکی والا</option>
+<option>Manah Khagah منہ کھگھہ</option>
+<option>Chowk Hafiz Lal چوک حافظ لال</option>
+<option>Chak Hafiz چک حافظ</option>
+<option>Lal Lalu لال لالو</option>
+<option>Gadar Rahman گدڑ رحمان</option>
+<option>Saonka سائونکا</option>
+<option>Batak Lali Ke بٹک للی کے</option>
+<option>Shahamand شہامند</option>
+<option>Bharpur Shah بھرپور شاہ</option>
+<option>Dighi Ahmed Yar ڈگھی احمد یار</option>
+<option>Lari Adda Basirpur لاری اڈا بصیرپور</option>
+<option>Railway Station Basirpur ریلوے اسٹیشن بصیرپور</option>
+<option>Mohalla Dars محلہ درس</option>
+<option>Mohalla Allama Iqbal Town محلہ علامہ اقبال ٹائون</option>
+<option>Gali Postmaster Ch Inam ul Haq Kamboh Wali گلی پوسٹ ماسٹر چوہدری انعام الحق کمبوہ والی</option>
+<option>Ghaus Pura غوث پورہ</option>
+<option>Tariq Pura طارق پورہ</option>
+<option>Thokar Gamman Wahgira ٹھوکر گاماں واہگیرہ</option>
+<option>Chak Ahmed Shah چک احمد شاہ</option>
+<option>Chak Ibrahim Mohalla چک ابراہیم محلہ</option>
+<option>Petrol Pump پٹرول پمپ</option>
+<option>Khole Mureed کھولے مرید</option>
+<option>Khole Jaimil کھولے جیمل</option>
+<option>Sohag Pul سہاگ پل</option>
+<option>Chak Ahmed Yar Bota Kot چک احمدیار بوٹا کوٹ</option>
+<option>Chak Bota چک بوٹا</option>
+<option>Chak Bedi Pakke Narain چک بیدی پکے نرائن</option>
+<option>Mahboob Shah محبوب شاہ</option>
+<option>Turbat Shah Hussain تربت شاہ حسین</option>
+<option>Marha مڑھا</option>
+<option>Gali Prokyan Wali
