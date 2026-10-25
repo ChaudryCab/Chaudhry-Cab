@@ -3,65 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab | Basirpur Complete 65+ Villages</title>
+<title>CCab - Chaudhry Cab Basirpur</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#eef4ee}
-.header{background:#111;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:99}
-.logo{width:50px;height:50px;background:linear-gradient(135deg,#16a34a,#22c55e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #fff;flex-shrink:0}
-.banner{width:100%;background:linear-gradient(90deg,#111 0%,#14532d 100%);color:#fff;padding:16px 14px;display:flex;align-items:center;justify-content:space-between}
-.banner h2{margin:0;font-size:20px;line-height:1.2}
-.banner h2 span{color:#4ade80}
-.container{max-width:720px;margin:auto}
-.box{background:#fff;margin:10px;padding:14px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-label{font-weight:700;font-size:13px;display:block;margin-top:12px}
-input,select{width:100%;padding:13px;border:1.5px solid #cbd5c0;border-radius:10px;margin-top:5px;font-size:15px;background:#fff}
-.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:900;font-size:16px;margin-top:10px;cursor:pointer;display:block;text-align:center;text-decoration:none}
-.btn-green{background:#16a34a;color:#fff}.btn-blue{background:#0ea5e9;color:#fff}.btn-black{background:#111;color:#fff}.btn-orange{background:#f59e0b;color:#111}
-.fare-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2.5px solid #16a34a;border-radius:14px;padding:12px;text-align:center;margin-top:14px}
-.fare-num{font-size:36px;font-weight:900;color:#16a34a;margin:4px 0}
-.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer;font-size:13px}
-.tab.active{background:#111;color:#fff}
-.hidden{display:none!important}
-.admin-box{background:#fffbe6;border:2px solid #f59e0b;border-radius:14px;padding:12px;margin-top:10px}
+body{margin:0;font-family:Arial;background:#f6f6f6}
+.header{background:#111;color:#fff;padding:12px;display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border:2px solid #fff}
+.box{background:#fff;margin:12px;padding:14px;border-radius:12px}
+input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;font-weight:800;font-size:16px;margin-top:10px;color:#fff;cursor:pointer}
+.green{background:#16a34a}.blue{background:#0ea5e9}.black{background:#111}
+.fare{font-size:30px;font-weight:900;color:#16a34a;text-align:center;margin:8px 0}
 </style>
 </head>
 <body>
-<div class="container">
 
-<!-- HEADER - LOGO ALWAYS SHOWS -->
 <div class="header">
-<div class="logo">CCab</div>
-<div>
-<div style="font-weight:900;font-size:16px">Chaudhry Cab - CCab</div>
-<div style="font-size:10px;opacity:.85">Basirpur + 65 Villages & Mohallas - 24/7 - Safe Reliable Affordable</div>
-</div>
+<div class="logo">CC</div>
+<div><b>Chaudhry Cab - CCab</b><br><span style="font-size:11px">Basirpur & 65+ Villages - Rs 100 سے شروع</span></div>
 </div>
 
-<!-- BANNER - ALWAYS SHOWS NO IMAGE NEEDED -->
-<div class="banner">
-<div>
-<div style="background:#16a34a;display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:6px">LIVE SERVICE</div>
-<h2>Chaudhry Cab - <span>CCab</span><br>Basirpur ↔ Lahore</h2>
-<div style="font-size:11px;opacity:.9;margin-top:4px">گنڈا سنگھ، طاہرکلاں، ونانوالہ، محمد نگر، اعظم چوک، قاری چوک سمیت تمام دیہات</div>
-</div>
-<div style="font-size:52px">🚖</div>
+<div class="box" style="background:#111;color:#fff">
+<b>Basirpur & All Villages Taxi</b><br>
+<small>گنڈا سنگھ، طاہرکلاں، ونانوالہ، اعظم چوک، قاری چوک سمیت</small>
 </div>
 
-<!-- TABS -->
 <div class="box">
-<div style="display:flex;gap:6px">
-<div id="tabP" class="tab active" onclick="showTab('passenger')">👤 مسافر بکنگ</div>
-<div id="tabD" class="tab" onclick="showTab('driver')">🚗 ڈرائیور بنیں</div>
-<div id="tabA" class="tab" onclick="showTab('admin')">🔧 ایڈمن</div>
-</div>
+<label>نام</label>
+<input id="name" placeholder="احمد">
 
-<!-- PASSENGER BOOKING - COMPLETE -->
-<div id="passenger" style="margin-top:12px">
-<label>آپ کا نام</label>
-<input id="pName" placeholder="مثال: موسی چوہدری">
-
-<label>کہاں سے - آپ کا گاؤں / محلہ / چوک (65+ شامل)</label>
-<select id="pFrom">
+<label>کہاں سے</label>
+<select id="from">
 <option>Basirpur بصیرپور</option>
 <option>Ganda Singh گنڈا سنگھ</option>
 <option>Tahir Kalan طاہرکلاں</option>
@@ -82,7 +53,7 @@ input,select{width:100%;padding:13px;border:1.5px solid #cbd5c0;border-radius:10
 <option>Manah Khagah منہ کھگھہ</option>
 <option>Chowk Hafiz Lal چوک حافظ لال</option>
 <option>Chak Hafiz چک حافظ</option>
-<option>Lal Lalu گدڑ لالو</option>
+<option>Lal Lalu لال لالو</option>
 <option>Gadar Rahman گدڑ رحمان</option>
 <option>Saonka سائونکا</option>
 <option>Batak Lali Ke بٹک للی کے</option>
@@ -90,6 +61,66 @@ input,select{width:100%;padding:13px;border:1.5px solid #cbd5c0;border-radius:10
 <option>Bharpur Shah بھرپور شاہ</option>
 <option>Dighi Ahmed Yar ڈگھی احمد یار</option>
 <option>Lari Adda Basirpur لاری اڈا بصیرپور</option>
-<option>Railway Station Basirpur ریلوے اسٹیشن بصیرپور</option>
+<option>Railway Station Basirpur ریلوے اسٹیشن</option>
 <option>Mohalla Dars محلہ درس</option>
-<option
+<option>Mohalla Allama Iqbal Town علامہ اقبال ٹائون</option>
+<option>Gali Postmaster Ch Inam ul Haq والی گلی</option>
+<option>Ghaus Pura غوث پورہ</option>
+<option>Tariq Pura طارق پورہ</option>
+<option>Thokar Gamman Wahgira ٹھوکر گاماں واہگیرہ</option>
+<option>Chak Ahmed Shah چک احمد شاہ</option>
+<option>Chak Ibrahim چک ابراہیم</option>
+<option>Petrol Pump پٹرول پمپ</option>
+<option>Khole Mureed کھولے مرید</option>
+<option>Khole Jaimil کھولے جیمل</option>
+<option>Sohag Pul سہاگ پل</option>
+<option>Chak Ahmed Yar Bota Kot چک احمدیار بوٹا کوٹ</option>
+<option>Chak Bota چک بوٹا</option>
+<option>Chak Bedi Pakke Narain چک بیدی پکے نرائن</option>
+<option>Mahboob Shah محبوب شاہ</option>
+<option>Turbat Shah Hussain تربت شاہ حسین</option>
+<option>Marha مڑھا</option>
+<option>Gali Prokyan Wali گلی پروکیانوالی</option>
+<option>Mohalla Sheikhupura محلہ شیخوپورہ</option>
+<option>Mohalla Petrol Pump محلہ پٹرول پمپ</option>
+<option>Gilani Chowk گیلانی چوک</option>
+<option>Gali Sheikhan Wali گلی شیخانوالی</option>
+<option>Mohalla Exchange محلہ ایکسچینج</option>
+<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Hujra حجرہ</option><option>Depalpur دیپالپور</option>
+</select>
+
+<label>کہاں جانا ہے</label>
+<select id="to">
+<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Basirpur بصیرپور</option><option>Lari Adda لاری اڈا</option><option>Ganda Singh گنڈا سنگھ</option><option>Tahir Kalan طاہرکلاں</option><option>Azam Chowk اعظم چوک</option><option>Qari Chowk قاری چوک</option><option>Gilani Chowk گیلانی چوک</option>
+</select>
+
+<div style="margin-top:14px;border:2px solid #16a34a;border-radius:10px;padding:10px;text-align:center">
+<div style="font-weight:800">💰 آپ کی آفر - کم از کم 100 روپے</div>
+<div id="show" class="fare">Rs 300</div>
+<input type="range" id="range" min="100" max="10000" step="50" value="300" style="width:100%">
+<div style="display:flex;justify-content:space-between;font-size:11px"><span>100</span><span>10000</span></div>
+<input type="number" id="num" value="300" min="100" style="text-align:center;font-weight:800;border:2px solid #16a34a">
+</div>
+
+<button class="btn green" onclick="book()">📲 رائیڈ بک کریں</button>
+<button class="btn blue" onclick="bookLoc()">📡 لوکیشن کے ساتھ بک کریں</button>
+<p id="st" style="text-align:center;color:green;font-weight:700"></p>
+</div>
+
+<div class="box">
+<b>🚗 ڈرائیور بنیں</b>
+<input id="dname" placeholder="ڈرائیور نام" style="margin-top:10px">
+<input id="dphone" placeholder="0300-1234567" style="margin-top:8px">
+<button class="btn black" onclick="driver()">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
+</div>
+
+<div class="box" style="text-align:center">
+<b>🔧 ایڈمن</b><br>
+<input id="apass" type="password" placeholder="پاس ورڈ ccab123" style="margin-top:8px">
+<button class="btn black" onclick="admin()">ایڈمن لاگ ان</button>
+<p style="font-size:11px;color:#666">یہ بٹن اب کام کرے گا - ccab123</p>
+</div>
+
+<script>
+let fare=300;
+const rg=document.getElementById('range'), nm=document.getElementById('num'), sh=document.getElementById('show
