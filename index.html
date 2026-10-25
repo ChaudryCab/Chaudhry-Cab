@@ -3,52 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab | Basirpur Complete Villages</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<title>Chaudhry Cab - CCab | Basirpur Complete 65+ Villages</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#f5f7f5}
-.header{background:#111;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
-.logo-circle{width:50px;height:50px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #fff;flex-shrink:0}
-.banner{width:100%;height:280px;background:linear-gradient(135deg,#111 0%,#1a2e1a 100%);display:flex;align-items:center;justify-content:space-between;padding:20px;color:#fff}
-.container{max-width:700px;margin:auto}
-.box{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.07)}
-.btn{width:100%;padding:14px;background:#16a34a;color:#fff;border:0;border-radius:12px;font-weight:800;font-size:16px;margin-top:12px;cursor:pointer;display:block;text-align:center;text-decoration:none}
-.btn-black{background:#111}.btn-blue{background:#0ea5e9}
-#map{width:100%;height:400px;border-radius:12px}
-.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer;font-size:14px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#eef4ee}
+.header{background:#111;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:99}
+.logo{width:50px;height:50px;background:linear-gradient(135deg,#16a34a,#22c55e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #fff;flex-shrink:0}
+.banner{width:100%;background:linear-gradient(90deg,#111 0%,#14532d 100%);color:#fff;padding:16px 14px;display:flex;align-items:center;justify-content:space-between}
+.banner h2{margin:0;font-size:20px;line-height:1.2}
+.banner h2 span{color:#4ade80}
+.container{max-width:720px;margin:auto}
+.box{background:#fff;margin:10px;padding:14px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+label{font-weight:700;font-size:13px;display:block;margin-top:12px}
+input,select{width:100%;padding:13px;border:1.5px solid #cbd5c0;border-radius:10px;margin-top:5px;font-size:15px;background:#fff}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:900;font-size:16px;margin-top:10px;cursor:pointer;display:block;text-align:center;text-decoration:none}
+.btn-green{background:#16a34a;color:#fff}.btn-blue{background:#0ea5e9;color:#fff}.btn-black{background:#111;color:#fff}.btn-orange{background:#f59e0b;color:#111}
+.fare-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2.5px solid #16a34a;border-radius:14px;padding:12px;text-align:center;margin-top:14px}
+.fare-num{font-size:36px;font-weight:900;color:#16a34a;margin:4px 0}
+.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer;font-size:13px}
 .tab.active{background:#111;color:#fff}
-.hidden{display:none !important}
-.village{display:inline-block;font-size:10px;background:#dcfce7;color:#14532d;padding:4px 8px;border-radius:20px;margin:2px;border:1px solid #bbf7d0}
-select{max-height:200px}
+.hidden{display:none!important}
+.admin-box{background:#fffbe6;border:2px solid #f59e0b;border-radius:14px;padding:12px;margin-top:10px}
 </style>
 </head>
 <body>
 <div class="container">
 
+<!-- HEADER - LOGO ALWAYS SHOWS -->
 <div class="header">
-<div class="logo-circle">CCab</div>
-<div><div style="font-weight:900">Chaudhry Cab - CCab</div><div style="font-size:10px">Basirpur Complete - تمام دیہات و محلے شامل</div></div>
+<div class="logo">CCab</div>
+<div>
+<div style="font-weight:900;font-size:16px">Chaudhry Cab - CCab</div>
+<div style="font-size:10px;opacity:.85">Basirpur + 65 Villages & Mohallas - 24/7 - Safe Reliable Affordable</div>
+</div>
 </div>
 
+<!-- BANNER - ALWAYS SHOWS NO IMAGE NEEDED -->
 <div class="banner">
 <div>
-<h1 style="margin:0;font-size:22px">Basirpur & All Villages<br><span style="color:#4ade80">CCab Taxi Service</span></h1>
-<p style="font-size:11px;opacity:.8;margin-top:6px">آپ کے گاؤں محلے سے ہر جگہ - مسافر اپنی مرضی کا کرایہ لگائے</p>
+<div style="background:#16a34a;display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:6px">LIVE SERVICE</div>
+<h2>Chaudhry Cab - <span>CCab</span><br>Basirpur ↔ Lahore</h2>
+<div style="font-size:11px;opacity:.9;margin-top:4px">گنڈا سنگھ، طاہرکلاں، ونانوالہ، محمد نگر، اعظم چوک، قاری چوک سمیت تمام دیہات</div>
 </div>
-<div style="font-size:50px">🚖</div>
+<div style="font-size:52px">🚖</div>
 </div>
 
+<!-- TABS -->
 <div class="box">
-<div style="display:flex;gap:8px">
+<div style="display:flex;gap:6px">
 <div id="tabP" class="tab active" onclick="showTab('passenger')">👤 مسافر بکنگ</div>
 <div id="tabD" class="tab" onclick="showTab('driver')">🚗 ڈرائیور بنیں</div>
+<div id="tabA" class="tab" onclick="showTab('admin')">🔧 ایڈمن</div>
 </div>
 
+<!-- PASSENGER BOOKING - COMPLETE -->
 <div id="passenger" style="margin-top:12px">
-<label>نام</label><input id="pName" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;margin-top:5px" placeholder="احمد">
-<label style="margin-top:10px;display:block;font-weight:700">کہاں سے - آپ کا گاؤں / محلہ / چوک</label>
-<select id="pFrom" style="width:100%;padding:12px;border-radius:10px;margin-top:5px">
+<label>آپ کا نام</label>
+<input id="pName" placeholder="مثال: موسی چوہدری">
+
+<label>کہاں سے - آپ کا گاؤں / محلہ / چوک (65+ شامل)</label>
+<select id="pFrom">
 <option>Basirpur بصیرپور</option>
 <option>Ganda Singh گنڈا سنگھ</option>
 <option>Tahir Kalan طاہرکلاں</option>
@@ -69,7 +82,7 @@ select{max-height:200px}
 <option>Manah Khagah منہ کھگھہ</option>
 <option>Chowk Hafiz Lal چوک حافظ لال</option>
 <option>Chak Hafiz چک حافظ</option>
-<option>Lal Lalu لال لالو</option>
+<option>Lal Lalu گدڑ لالو</option>
 <option>Gadar Rahman گدڑ رحمان</option>
 <option>Saonka سائونکا</option>
 <option>Batak Lali Ke بٹک للی کے</option>
@@ -79,21 +92,4 @@ select{max-height:200px}
 <option>Lari Adda Basirpur لاری اڈا بصیرپور</option>
 <option>Railway Station Basirpur ریلوے اسٹیشن بصیرپور</option>
 <option>Mohalla Dars محلہ درس</option>
-<option>Mohalla Allama Iqbal Town محلہ علامہ اقبال ٹائون</option>
-<option>Gali Postmaster Ch Inam ul Haq Kamboh Wali گلی پوسٹ ماسٹر چوہدری انعام الحق کمبوہ والی</option>
-<option>Ghaus Pura غوث پورہ</option>
-<option>Tariq Pura طارق پورہ</option>
-<option>Thokar Gamman Wahgira ٹھوکر گاماں واہگیرہ</option>
-<option>Chak Ahmed Shah چک احمد شاہ</option>
-<option>Chak Ibrahim Mohalla چک ابراہیم محلہ</option>
-<option>Petrol Pump پٹرول پمپ</option>
-<option>Khole Mureed کھولے مرید</option>
-<option>Khole Jaimil کھولے جیمل</option>
-<option>Sohag Pul سہاگ پل</option>
-<option>Chak Ahmed Yar Bota Kot چک احمدیار بوٹا کوٹ</option>
-<option>Chak Bota چک بوٹا</option>
-<option>Chak Bedi Pakke Narain چک بیدی پکے نرائن</option>
-<option>Mahboob Shah محبوب شاہ</option>
-<option>Turbat Shah Hussain تربت شاہ حسین</option>
-<option>Marha مڑھا</option>
-<option>Gali Prokyan Wali
+<option
