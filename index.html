@@ -48,5 +48,10 @@ document.getElementById('bookBtn').addEventListener('click', async ()=>{
   }catch(e){alert(e.message); btn.textContent='Book Now'; btn.disabled=false;}
 });
 </script>
+  <script type="module">
+  import { saveRide } from "./firebase.js";
+  window.saveRide = saveRide;
+  console.log("CCab Firebase Connected");
+</script>
 </body>
 </html>
