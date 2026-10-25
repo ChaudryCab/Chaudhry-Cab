@@ -1,54 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab Basirpur</title>
+<title>Chaudhry Cab - CCab</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#f5f7fb}
-.header{background:#111;color:#fff;padding:18px;text-align:center}
-.header h1{font-size:22px} .header p{color:#ffd600;margin-top:4px}
-.container{max-width:500px;margin:20px auto;padding:0 16px}
-.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
-input,select,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:1px solid #ddd;font-size:16px}
-button{background:#111;color:#fff;font-weight:700;border:none}
-.success{background:#e7f7e9;color:#166a24;padding:12px;border-radius:10px;display:none;text-align:center;margin-top:12px}
+*{box-sizing:border-box;font-family:system-ui} body{margin:0;background:#f5f5f7}
+.header{background:#000;color:#fff;padding:16px;text-align:center}
+.tabs{display:flex;background:#fff} .tab{flex:1;padding:14px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
+.tab.active{border-color:#000;background:#fffbe6}
+.card{background:#fff;margin:12px;border-radius:16px;padding:16px;box-shadow:0 4px 12px #0001}
+.label{font-size:12px;font-weight:700;margin:10px 0 4px} .input,.select{width:100%;padding:12px;border-radius:10px;border:1.5px solid #ddd}
+.btn{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:12px;font-weight:800;margin-top:12px}
+.btn-yellow{background:#ffcc00;color:#000} .vehicle-grid{display:flex;gap:8px} .vehicle{flex:1;border:2px solid #eee;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.vehicle.active{border-color:#000;background:#fff8cc} .row{display:flex;gap:8px} .row>div{flex:1}
+.live-btn{background:#e8f5e9;color:#1b5e20;border:1px dashed #4caf50}
 </style>
 </head>
 <body>
-<div class="header"><h1>Chaudhry Cab - CCab</h1><p>Basirpur | Okara | Sialkot - 24/7 Service</p></div>
-<div class="container"><div class="card">
-<h2 style="text-align:center">🚕 Ride Book Karen</h2>
-<input id="name" placeholder="Aapka Naam">
-<input id="phone" placeholder="Phone 03XX..." type="tel">
-<select id="from"><option>Basirpur</option><option>Okara</option><option>Sialkot</option><option>Lahore</option></select>
-<select id="to"><option>Sialkot</option><option>Basirpur</option><option>Lahore</option><option>Sialkot Airport</option></select>
-<input id="date" type="date">
-<select id="car"><option>Mini Car</option><option>Corolla</option><option>Hiace Van</option></select>
-<button id="bookBtn">Book Now - Confirm</button>
-<div id="msg" class="success">✅ Booking save ho gayi! Hum jald rabta karenge.</div>
-</div></div>
-<script type="module">
-import { saveRide } from "./firebase.js";
-document.getElementById('bookBtn').addEventListener('click', async ()=>{
-  const name=document.getElementById('name').value.trim();
-  const phone=document.getElementById('phone').value.trim();
-  if(!name||!phone){alert('Naam aur Phone likhna zaruri hai');return;}
-  const from=document.getElementById('from').value;
-  const to=document.getElementById('to').value;
-  const date=document.getElementById('date').value;
-  const car=document.getElementById('car').value;
-  const btn=document.getElementById('bookBtn');
-  btn.textContent='Saving...'; btn.disabled=true;
-  try{
-    await saveRide({name,phone,from,to,date,car});
-    document.getElementById('msg').style.display='block';
-    btn.textContent='Booked ✅';
-  }catch(e){alert(e.message); btn.textContent='Book Now - Confirm'; btn.disabled=false;}
-});
-</script>
-</body>
-</html>
-</body>
-</html>
+<div class="header"><h1>Chaudhry Cab - CCab</h1><p>Basirpur | Hujra | Mandi Ahmad Abad | Depalpur | Okara | Lahore - 24/7</p></div>
+<div class="tabs">
+<div class="tab active" onclick="showTab('passenger')">🚖 Ride Book</div>
+<div class="tab" onclick="showTab('driver')">🧑‍✈️ Driver Bano</div>
+</div>
+<div id="passengerTab" class="card">
+<input id="pName" class="input" placeholder="Aapka Naam">
+<input id="pPhone" class="input" placeholder="Phone 03XX" style="margin-top:8px">
+<div class="row"><div><select id="pFrom" class="select"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option><option>Okara</option><option>Lahore</option><option>Sahiwal</option></select></div><div><select id="pTo" class="select"><option>Okara</option><option>Lahore</option><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option></select></div></div>
+<button class="btn live-btn" style="background:#e8f5e9" onclick="getLiveLocation('passenger')">📍 Live Location</button>
+<div id="pLiveLoc" style="font-size:11px;color:green;display:none"></div>
+<div class="vehicle-grid" style="margin-top:8px">
+<div class="vehicle active" data-v="Bike" onclick="selectVehicle(this,'pVehicle')">🏍️ Bike</div>
+<div class="vehicle" data-v="Rickshaw" onclick="selectVehicle(this,'pVehicle')">🛺 Rickshaw</div>
+<div class="vehicle" data-v="Mini Car" onclick="selectVehicle(this,'pVehicle')">🚗 Car</div>
+</div>
+<input type="hidden" id="pVehicle" value="Bike">
+<button class="btn" onclick="bookRide()">Book Now</button>
+<div id="pMsg"></div>
+</div>
+<div id="driverTab" class="card" style="display:none">
+<input id="dName" class="input" placeholder="Driver Naam">
+<input id="dPhone" class="input" placeholder="Phone" style="margin-top:8px">
+<input id="dCnic" class="input" placeholder="CNIC" style="margin-top:8px">
+<select id="dVehicleType" class="select" style="margin-top:8px"><option>Bike</option><option>Rickshaw</option><option>Mini Car</option></select>
+<button class="btn live-btn" onclick="getLiveLocation('driver')">📍 Current Location</button>
+<div id="dLiveLoc" style="font-size:11px;color:green;display:none"></div>
+<button class="btn btn-yellow" onclick="registerDriver()">Register</button>
+<div id="dMsg"></div>
+</div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAlcir0H933LPELz_6kl-mPPNQjbJ6cakY",
+  authDomain: "ccab-basirpur.firebaseapp.com",
+  projectId: "ccab-basirpur",
+  storageBucket: "ccab-basirpur.firebasestorage.app",
+  messagingSenderId: "228594209572",
+  appId: "1:228594209572:web:0143555bebdfb3a3c819b1"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+function showTab(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(t==='passenger'){document.getElementById('passengerTab').style.display='block';document.getElementById('driverTab').style.display='none';document.querySelectorAll('.tab')[0].classList.add('active')}else{document.getElementById('passengerTab').style.display='none';document.getElementById('driverTab').style.display='block';document.querySelectorAll('.tab')[1].classList.add('active')}}
+function selectVehicle(el,id){el.parentElement.querySelectorAll('.vehicle').forEach(v=>v.classList.remove('active'));el.classList.add('active');document.getElementById(id).value=el.dataset.v}
+let passengerLoc=null,driverLoc=null;
+function getLiveLocation(type){navigator.geolocation.getCurrentPosition(pos=>{const c={lat:pos.coords.latitude,lng:pos.coords.longitude,link:`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`};if(type==='passenger'){passengerLoc=c;document.getElementById('pLiveLoc').style.display='block';document.getElementById('pLiveLoc').innerHTML=`✅ ${c.lat}, ${c.lng} <a href='${c.link}' target='_blank'>Map</a>`}else{driverLoc=c;document.getElementById('dLiveLoc').style.display='block';document.getElementById('dLiveLoc').innerHTML=`✅ ${c.lat}, ${c.lng}`}})}
+async function bookRide(){const data={customerName:document.getElementById('pName').value,phone:document.getElementById('pPhone
