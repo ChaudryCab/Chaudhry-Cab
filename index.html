@@ -10,8 +10,8 @@
 *{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#f5f7f5}
 .header{background:#111;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
 .header img{width:50px;height:50px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid #16a34a}
-.hero{position:relative;width:100%;height:320px;overflow:hidden;background:#000}
-.hero img{width:100%;height:100%;object-fit:cover;opacity:.85}
+.hero{position:relative;width:100%;height:340px;overflow:hidden;background:#000}
+.hero img{width:100%;height:100%;object-fit:cover}
 .hero-text{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.9));color:#fff}
 .container{max-width:680px;margin:auto}
 .box{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.07)}
@@ -21,11 +21,9 @@ input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px
 .btn-black{background:#111}.btn-blue{background:#0ea5e9}
 #map{width:100%;height:360px;border-radius:12px}
 .tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer;user-select:none}
+.tab{flex:1;padding:12px;text-align:center;background:#e5e7eb;border-radius:10px;font-weight:800;cursor:pointer}
 .tab.active{background:#111;color:#fff}
 .hidden{display:none !important}
-.fare-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee;font-size:14px}
-.price{background:#16a34a;color:#fff;padding:4px 10px;border-radius:20px;font-weight:800;font-size:12px}
 .sticky{position:sticky;bottom:0;background:#fff;padding:10px;display:flex;gap:8px;box-shadow:0 -2px 12px rgba(0,0,0,.15);z-index:50}
 </style>
 </head>
@@ -33,13 +31,14 @@ input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px
 <div class="container">
 
 <div class="header">
-<img src="IMG-20261025-WA0751.jpg">
-<div><div style="font-weight:900">Chaudhry Cab - CCab</div><div style="font-size:11px;opacity:.8">Basirpur | Hujra | Depalpur | Mandi | Haveli | Okara | Sahiwal | Lahore</div></div>
+<img src="IMG-20261025-WA0751.jpg" onerror="this.src='https://via.placeholder.com/100?text=CCab'">
+<div><div style="font-weight:900">Chaudhry Cab - CCab</div><div style="font-size:11px">Basirpur | Hujra | Depalpur | Mandi | Haveli | Okara | Sahiwal | Lahore</div></div>
 </div>
 
+<!-- ===== بینر یہاں ہے - اب یہ والا بینر لگے گا ===== -->
 <div class="hero">
-<img src="IMG-20261025-WA0751.jpg">
-<div class="hero-text"><h2 style="margin:0">بصیرپور کا اپنا کیب</h2><p style="margin:4px 0 0;font-size:13px">مسافر بکنگ + ڈرائیور رجسٹریشن</p></div>
+<img src="banner.jpg" onerror="this.src='IMG-20261025-WA0751.jpg'" alt="CCab Banner">
+<div class="hero-text"><h2 style="margin:0">بصیرپور کا اپنا کیب</h2><p style="margin:4px 0 0;font-size:13px">مسافر اپنی مرضی کا کرایہ لگائے - InDrive کی طرح</p></div>
 </div>
 
 <div class="box">
@@ -48,40 +47,34 @@ input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px
 <div id="tabDriver" class="tab" onclick="showTab('driver')">🚗 ڈرائیور بنیں</div>
 </div>
 
-<!-- PASSENGER -->
+<!-- PASSENGER - SIRF APNI MARZI KA RATE -->
 <div id="passenger">
 <label>نام</label><input id="pName" placeholder="احمد">
 <label>کہاں سے</label>
 <select id="pFrom"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option><option>Mandi Ahmad Abad</option><option>Haveli Lakha</option><option>Okara</option><option>Sahiwal</option><option>Lahore</option></select>
 <label>کہاں جانا ہے</label>
 <select id="pTo"><option>Lahore</option><option>Okara</option><option>Sahiwal</option><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option></select>
-<label>آپ کی آفر: <b id="fareShow" style="color:#16a34a">Rs 2500</b></label>
-<input type="range" id="fareRange" min="500" max="10000" step="100" value="2500" style="width:100%;accent-color:#16a34a">
-<input type="number" id="fareNumber" value="2500" style="text-align:center;font-weight:800;margin-top:6px">
-<button class="btn" onclick="bookPassenger()">📲 WhatsApp پر بکنگ بھیجیں</button>
+
+<label style="margin-top:14px;font-size:15px">💰 آپ اپنی آفر لگائیں: <b id="fareShow" style="color:#16a34a;font-size:22px">Rs 2500</b></label>
+<input type="range" id="fareRange" min="500" max="10000" step="100" value="2500" style="width:100%;accent-color:#16a34a;height:8px">
+<div style="display:flex;justify-content:space-between;font-size:11px;color:#666"><span>Rs 500</span><span>Rs 10000</span></div>
+<input type="number" id="fareNumber" value="2500" style="text-align:center;font-weight:800;margin-top:8px;font-size:18px;border:2px solid #16a34a">
+<p style="font-size:12px;color:#666;text-align:center;margin:6px 0 0">سلائیڈر سے کم زیادہ کریں، ڈرائیور آپ کی آفر دیکھ کر رابطہ کرے گا</p>
+
+<button class="btn" onclick="bookPassenger()">📲 اس آفر پر بکنگ بھیجیں</button>
 <button class="btn btn-blue" onclick="bookWithLocation()">📡 لائیو لوکیشن کے ساتھ بکنگ</button>
 <p id="locStatus" style="text-align:center;color:#16a34a;font-weight:700;font-size:13px"></p>
 </div>
 
-<!-- DRIVER - AB FIXED -->
+<!-- DRIVER -->
 <div id="driver" class="hidden">
 <label>ڈرائیور کا نام *</label><input id="dName" placeholder="پورا نام">
 <label>فون نمبر *</label><input id="dPhone" placeholder="0300-1234567">
 <label>گاڑی</label><select id="dCar"><option>Mehran / Alto</option><option>Cultus / WagonR</option><option>Corolla / City</option><option>APV / Carry</option><option>Bike</option></select>
 <label>علاقہ</label><select id="dArea"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Depalpur</option><option>Mandi Ahmad Abad</option><option>Haveli Lakha</option><option>Okara</option><option>Sahiwal</option></select>
 <label>لائسنس نمبر</label><input id="dLicense" placeholder="DL-12345">
-<button class="btn btn-black" onclick="registerDriver()">🚗 ڈرائیور رجسٹریشن WhatsApp پر بھیجیں</button>
-<p style="font-size:12px;color:#666;text-align:center;margin-top:8px">فارم بھر کر بھیجیں، ہم 10 منٹ میں رابطہ کریں گے</p>
+<button class="btn btn-black" onclick="registerDriver()">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
 </div>
-</div>
-
-<div class="box">
-<h3>💰 فکس کرایہ</h3>
-<div class="fare-row"><span>Basirpur → Hujra</span><span class="price">Rs 800</span></div>
-<div class="fare-row"><span>Basirpur → Mandi / Depalpur / Haveli</span><span class="price">Rs 1,800</span></div>
-<div class="fare-row"><span>Basirpur → Okara</span><span class="price">Rs 2,500</span></div>
-<div class="fare-row"><span>Basirpur → Sahiwal</span><span class="price">Rs 4,000</span></div>
-<div class="fare-row"><span>Basirpur → Lahore</span><span class="price">Rs 6,500</span></div>
 </div>
 
 <div class="box"><h3>📍 سروس ایریا</h3><div id="map"></div></div>
@@ -89,8 +82,8 @@ input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px
 </div>
 
 <div class="sticky container" style="max-width:680px;margin:auto">
-<a class="btn" onclick="showTab('passenger');window.scrollTo(0,400)" style="background:#16a34a">👤 مسافر</a>
-<a class="btn btn-black" onclick="showTab('driver');window.scrollTo(0,400)">🚗 ڈرائیور</a>
+<a class="btn" onclick="showTab('passenger');window.scrollTo(0,350)" style="background:#16a34a">👤 مسافر</a>
+<a class="btn btn-black" onclick="showTab('driver');window.scrollTo(0,350)">🚗 ڈرائیور</a>
 </div>
 
 <script>
@@ -109,23 +102,22 @@ const fareShow=document.getElementById('fareShow');
 function syncFare(v){fare=parseInt(v)||500;fareRange.value=fare;fareNumber.value=fare;fareShow.innerText="Rs "+fare;}
 fareRange.oninput=e=>syncFare(e.target.value);
 fareNumber.oninput=e=>syncFare(e.target.value);
-
 function bookPassenger(){
   let name=document.getElementById('pName').value||"Passenger";
   let from=document.getElementById('pFrom').value;
   let to=document.getElementById('pTo').value;
-  let msg=`Salam CCab!\n\n*Passenger Booking*\nName: ${name}\nFrom: ${from}\nTo: ${to}\nOffer: Rs ${fare}\n\nConfirm karein`;
+  let msg=`Salam CCab!\n\n*Passenger Booking*\nName: ${name}\nFrom: ${from}\nTo: ${to}\nMeri Offer: Rs ${fare}\n\nIs fare par ride chahiye`;
   window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
 }
 function bookWithLocation(){
   let s=document.getElementById('locStatus');s.innerText="لوکیشن لی جا رہی ہے...";
   navigator.geolocation.getCurrentPosition(pos=>{
     let link=`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-    s.innerHTML=`✅ لوکیشن مل گئی`;
+    s.innerText=`✅ لوکیشن مل گئی`;
     let name=document.getElementById('pName').value||"Passenger";
     let from=document.getElementById('pFrom').value;
     let to=document.getElementById('pTo').value;
-    let msg=`Salam CCab!\n\n*Passenger Booking*\nName: ${name}\nFrom: ${from}\nTo: ${to}\nOffer: Rs ${fare}\nLocation: ${link}`;
+    let msg=`Salam CCab!\n\nName: ${name}\nFrom: ${from}\nTo: ${to}\nMeri Offer: Rs ${fare}\nLocation: ${link}`;
     window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
   },()=>{s.innerText="Location Allow کریں";});
 }
@@ -136,7 +128,7 @@ function registerDriver(){
   let car=document.getElementById('dCar').value;
   let area=document.getElementById('dArea').value;
   let license=document.getElementById('dLicense').value;
-  let msg=`*Driver Registration - CCab*\n\nName: ${name}\nPhone: ${phone}\nCar: ${car}\nArea: ${area}\nLicense: ${license}\n\nMain CCab me driver banna chahta hun`;
+  let msg=`*Driver Registration - CCab*\n\nName: ${name}\nPhone: ${phone}\nCar: ${car}\nArea: ${area}\nLicense: ${license}`;
   window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`,'_blank');
 }
 var map=L.map('map').setView([30.58,73.80],10);
