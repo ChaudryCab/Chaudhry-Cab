@@ -1,0 +1,983 @@
+```html
+<!DOCTYPE html>
+<html lang="ur" dir="rtl" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>چوہدری کیب - Chaudhry Cab | پاکستان کی اپنی ای ٹیکسی سروس</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Leaflet OpenStreetMap CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts: Inter & Noto Sans Arabic / Nastaliq support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              gold: '#f59e0b'
+            },
+            jazz: '#e11d48',
+            easypaisa: '#16a34a'
+          },
+          fontFamily: {
+            sans: ['Noto Sans Arabic', 'Inter', 'sans-serif'],
+            ur: ['Noto Sans Arabic', 'sans-serif'],
+            en: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+
+    /* Radar Pulsing Animation */
+    @keyframes radar-pulse {
+      0% { transform: scale(0.2); opacity: 0.9; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .radar-circle {
+      animation: radar-pulse 2s infinite ease-out;
+    }
+
+    /* Driver Marker Moving Pulse */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .driver-pulse {
+      animation: pulse-ring 1.8s infinite;
+    }
+
+    /* Leaflet Popup Styling */
+    .leaflet-popup-content-wrapper {
+      background: #1e293b !important;
+      color: #f8fafc !important;
+      border-radius: 12px !important;
+      border: 1px solid #334155 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+    }
+    .leaflet-popup-tip {
+      background: #1e293b !important;
+    }
+
+    /* Mobile Container Dimensions */
+    .app-viewport {
+      max-width: 480px;
+      height: 860px;
+      margin: 0 auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+    @media (max-width: 640px) {
+      .app-viewport {
+        max-width: 100%;
+        height: 100vh;
+        border-radius: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-950 font-sans text-slate-100 flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-taxi"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+            <span class="lang-ur">چوہدری کیب</span>
+            <span class="lang-en hidden">Chaudhry Cab</span>
+            <span class="text-[10px] bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full font-semibold border border-brand-500/30">PRO</span>
+          </h1>
+          <p class="text-[11px] text-slate-400">
+            <span class="lang-ur">پاکستان کا اپنا سفر</span>
+            <span class="lang-en hidden">Pakistan's Choice Ride</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex items-center bg-slate-800/90 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
+        <button id="modeBtnPassenger" onclick="switchMode('passenger')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 bg-brand-600 text-white shadow-sm">
+          <i class="fa-solid fa-user"></i> 
+          <span class="lang-ur">مسافر</span>
+          <span class="lang-en hidden">Passenger</span>
+        </button>
+        <button id="modeBtnDriver" onclick="switchMode('driver')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+          <i class="fa-solid fa-id-card"></i> 
+          <span class="lang-ur">ڈرائیور</span>
+          <span class="lang-en hidden">Driver</span>
+        </button>
+        <button id="modeBtnAdmin" onclick="switchMode('admin')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+          <i class="fa-solid fa-chart-line"></i> 
+          <span class="lang-ur">ایڈمن</span>
+          <span class="lang-en hidden">Admin</span>
+        </button>
+      </div>
+
+      <!-- User Auth Status & Language Toggle -->
+      <div class="flex items-center space-x-2 space-x-reverse">
+        <button id="loginAuthBtn" onclick="openLoginModal()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-brand-400 font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-mobile-screen text-slate-300"></i>
+          <span id="userAuthLabel">
+            <span class="lang-ur">لاگ ان</span>
+            <span class="lang-en hidden">Login</span>
+          </span>
+        </button>
+
+        <button onclick="toggleLanguage()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-amber-400 font-bold flex items-center gap-1 transition">
+          <i class="fa-solid fa-globe"></i>
+          <span id="langLabel">English</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="flex-1 relative overflow-hidden flex flex-col justify-center items-center p-0 sm:p-4">
+    
+    <div id="appContainer" class="app-viewport w-full bg-slate-900 sm:border border-slate-800 sm:rounded-3xl overflow-hidden flex flex-col relative transition-all duration-300">
+      
+      <!-- Leaflet Map Section -->
+      <div id="mapSection" class="relative w-full flex-1 min-h-[320px]">
+        <div id="map" class="w-full h-full z-0"></div>
+
+        <!-- Map Controls Overlay -->
+        <div class="absolute top-3 right-3 z-10 flex flex-col gap-2">
+          <button onclick="recenterMap()" title="Recenter Location" class="bg-slate-900/90 backdrop-blur border border-slate-700 text-slate-200 w-9 h-9 rounded-full shadow-lg flex items-center justify-center hover:bg-slate-800 transition active:scale-95">
+            <i class="fa-solid fa-crosshairs text-brand-400"></i>
+          </button>
+        </div>
+
+        <!-- Active Simulation Status Banner -->
+        <div id="simulationBanner" class="hidden absolute top-3 left-3 right-14 z-10 bg-slate-900/95 border border-brand-500/40 backdrop-blur-md px-3 py-2 rounded-xl text-xs flex items-center justify-between shadow-xl">
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
+            </span>
+            <span id="simBannerText" class="font-medium text-slate-200">کپتان عثمان آپ کی طرف آ رہے ہیں</span>
+          </div>
+          <span id="simTimeEst" class="text-brand-400 font-bold">4 منٹ</span>
+        </div>
+
+        <!-- Radar Search Animation Overlay -->
+        <div id="radarOverlay" class="hidden absolute inset-0 bg-slate-950/70 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-4 text-center">
+          <div class="relative w-44 h-44 flex items-center justify-center">
+            <div class="absolute w-full h-full rounded-full border border-brand-500/40 radar-circle"></div>
+            <div class="absolute w-3/4 h-3/4 rounded-full border border-brand-500/60 radar-circle" style="animation-delay: 0.6s;"></div>
+            <div class="absolute w-1/2 h-1/2 rounded-full border border-brand-500/80 radar-circle" style="animation-delay: 1.2s;"></div>
+            <div class="w-16 h-16 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-2xl shadow-brand-500/50 z-10 animate-bounce">
+              <i class="fa-solid fa-taxi text-2xl"></i>
+            </div>
+          </div>
+          <p class="mt-4 text-sm font-bold text-white animate-pulse">
+            <span class="lang-ur">قریب ترین چوہدری کپتان کی تلاش جاری ہے...</span>
+            <span class="lang-en hidden">Finding nearest Chaudhry Captain...</span>
+          </p>
+          <p class="text-xs text-slate-400 mt-1">
+            <span class="lang-ur">براہ کرم چند سیکنڈ انتظار کریں</span>
+            <span class="lang-en hidden">Please wait a few seconds</span>
+          </p>
+          <button onclick="cancelSearch()" class="mt-5 px-5 py-2 bg-rose-600/90 hover:bg-rose-600 text-white rounded-full text-xs font-semibold transition shadow-lg">
+            <span class="lang-ur">درخواست منسوخ کریں</span>
+            <span class="lang-en hidden">Cancel Request</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PASSENGER SHEET PANEL -->
+      <div id="passengerSheet" class="bg-slate-900 border-t border-slate-800 p-4 flex flex-col gap-3 z-20 transition-all max-h-[52vh] overflow-y-auto">
+        
+        <!-- Pickup & Dropoff Dropdowns -->
+        <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80 space-y-2.5">
+          <!-- Pickup -->
+          <div class="flex items-center gap-3">
+            <div class="w-3.5 h-3.5 rounded-full bg-brand-500 ring-4 ring-brand-500/20"></div>
+            <div class="flex-1">
+              <label class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                <span class="lang-ur">پک اپ لوکیشن (جہاں سے بیٹھنا ہے)</span>
+                <span class="lang-en hidden">PICKUP LOCATION</span>
+              </label>
+              <select id="pickupSelect" onchange="updateLocationsFromSelect()" class="w-full bg-transparent text-xs text-slate-100 font-semibold focus:outline-none">
+                <option value="0" class="bg-slate-800">کلمہ چوک، لاہور (Kalma Chowk)</option>
+                <option value="1" class="bg-slate-800">لبرٹی مارکیٹ، گلبرگ (Liberty Market)</option>
+                <option value="2" class="bg-slate-800">ڈی ایچ اے فیز 5، رنگ روڈ (DHA Phase 5)</option>
+                <option value="3" class="bg-slate-800">مال روڈ / انارکلی (Mall Road)</option>
+              </select>
+            </div>
+            <i class="fa-solid fa-location-crosshairs text-brand-400 text-xs"></i>
+          </div>
+
+          <div class="h-px bg-slate-700/50 my-1"></div>
+
+          <!-- Dropoff -->
+          <div class="flex items-center gap-3">
+            <div class="w-3.5 h-3.5 rounded-full bg-rose-500 ring-4 ring-rose-500/20"></div>
+            <div class="flex-1">
+              <label class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                <span class="lang-ur">ڈراپ آف لوکیشن (جہاں جانا ہے)</span>
+                <span class="lang-en hidden">DROP OFF LOCATION</span>
+              </label>
+              <select id="dropoffSelect" onchange="updateLocationsFromSelect()" class="w-full bg-transparent text-xs text-slate-100 font-semibold focus:outline-none">
+                <option value="1" class="bg-slate-800">لبرٹی مارکیٹ، گلبرگ (Liberty Market)</option>
+                <option value="0" class="bg-slate-800">کلمہ چوک، لاہور (Kalma Chowk)</option>
+                <option value="2" class="bg-slate-800">ڈی ایچ اے فیز 5، رنگ روڈ (DHA Phase 5)</option>
+                <option value="3" class="bg-slate-800">مال روڈ / انارکلی (Mall Road)</option>
+              </select>
+            </div>
+            <i class="fa-solid fa-location-dot text-rose-400 text-xs"></i>
+          </div>
+        </div>
+
+        <!-- Vehicle Type Selector -->
+        <div id="rideTypesContainer" class="grid grid-cols-4 gap-2">
+          
+          <!-- Bike -->
+          <div onclick="selectRideOption('bike')" id="rideOpt-bike" class="ride-opt border-2 border-brand-500 bg-brand-500/10 p-2 rounded-2xl text-center cursor-pointer transition">
+            <div class="text-brand-400 text-lg mb-0.5"><i class="fa-solid fa-motorcycle"></i></div>
+            <div class="text-[11px] font-bold text-white">
+              <span class="lang-ur">بائیک</span>
+              <span class="lang-en hidden">Bike</span>
+            </div>
+            <div class="text-[9px] text-slate-400">2 min</div>
+            <div class="text-xs font-extrabold text-brand-400 mt-0.5" id="price-bike">PKR 140</div>
+          </div>
+
+          <!-- Auto Rickshaw -->
+          <div onclick="selectRideOption('auto')" id="rideOpt-auto" class="ride-opt border-2 border-slate-700 bg-slate-800/50 p-2 rounded-2xl text-center cursor-pointer transition hover:border-slate-600">
+            <div class="text-amber-400 text-lg mb-0.5"><i class="fa-solid fa-taxi"></i></div>
+            <div class="text-[11px] font-bold text-white">
+              <span class="lang-ur">آٹو</span>
+              <span class="lang-en hidden">Auto</span>
+            </div>
+            <div class="text-[9px] text-slate-400">3 min</div>
+            <div class="text-xs font-extrabold text-slate-300 mt-0.5" id="price-auto">PKR 260</div>
+          </div>
+
+          <!-- Mini Car -->
+          <div onclick="selectRideOption('mini')" id="rideOpt-mini" class="ride-opt border-2 border-slate-700 bg-slate-800/50 p-2 rounded-2xl text-center cursor-pointer transition hover:border-slate-600">
+            <div class="text-sky-400 text-lg mb-0.5"><i class="fa-solid fa-car-side"></i></div>
+            <div class="text-[11px] font-bold text-white">
+              <span class="lang-ur">منی کار</span>
+              <span class="lang-en hidden">Mini Car</span>
+            </div>
+            <div class="text-[9px] text-slate-400">4 min</div>
+            <div class="text-xs font-extrabold text-slate-300 mt-0.5" id="price-mini">PKR 480</div>
+          </div>
+
+          <!-- Go Plus -->
+          <div onclick="selectRideOption('goplus')" id="rideOpt-goplus" class="ride-opt border-2 border-slate-700 bg-slate-800/50 p-2 rounded-2xl text-center cursor-pointer transition hover:border-slate-600">
+            <div class="text-emerald-400 text-lg mb-0.5"><i class="fa-solid fa-car"></i></div>
+            <div class="text-[11px] font-bold text-white">
+              <span class="lang-ur">گو پلس</span>
+              <span class="lang-en hidden">Go Plus</span>
+            </div>
+            <div class="text-[9px] text-slate-400">5 min</div>
+            <div class="text-xs font-extrabold text-slate-300 mt-0.5" id="price-goplus">PKR 720</div>
+          </div>
+
+        </div>
+
+        <!-- Payment Selector Bar -->
+        <div onclick="openPaymentModal()" class="flex items-center justify-between bg-slate-800/60 px-3.5 py-2.5 rounded-xl border border-slate-700/70 text-xs cursor-pointer hover:bg-slate-800 transition">
+          <div class="flex items-center gap-2.5">
+            <div id="payMethodBadge" class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400 block">
+                <span class="lang-ur">طریقہ ادائیگی</span>
+                <span class="lang-en hidden">Payment Method</span>
+              </span>
+              <span id="payMethodLabel" class="font-bold text-slate-100">نقد رقم (Cash on Ride)</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-left text-xs text-slate-500 rtl:rotate-0 rotate-180"></i>
+        </div>
+
+        <!-- Book Ride Button -->
+        <button id="bookRideBtn" onclick="initiateRideBooking()" class="w-full bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-brand-600/30 transition transform active:scale-95 flex items-center justify-center gap-2 text-sm">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>
+            <span class="lang-ur">رائیڈ تلاش کریں</span>
+            <span class="lang-en hidden">Book Ride Now</span>
+          </span>
+          <span id="bookRidePriceTag" class="bg-black/25 px-2.5 py-0.5 rounded-lg text-xs font-semibold">PKR 140</span>
+        </button>
+
+      </div>
+
+      <!-- DRIVER SHEET PANEL -->
+      <div id="driverSheet" class="hidden bg-slate-900 border-t border-slate-800 p-4 flex-col gap-3 z-20">
+        
+        <!-- Driver Profile & Status Bar -->
+        <div class="flex items-center justify-between bg-slate-800 p-3 rounded-2xl border border-slate-700">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-brand-600 text-white border-2 border-brand-400 flex items-center justify-center font-bold text-sm">
+              ع
+            </div>
+            <div>
+              <h3 class="text-xs font-bold text-white">عثمان احمد (Usman Ahmed)</h3>
+              <p class="text-[10px] text-brand-400 flex items-center gap-1">
+                <i class="fa-solid fa-star text-amber-400"></i> 4.95 (420 سواریاں)
+              </p>
+            </div>
+          </div>
+
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="driverOnlineToggle" onchange="toggleDriverStatus()" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+            <span id="driverStatusLabel" class="mr-2 text-xs font-bold text-brand-400">آن لائن</span>
+          </label>
+        </div>
+
+        <!-- Driver Action Simulator Card -->
+        <div id="driverActionCard" class="bg-slate-800/90 border border-slate-700 p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-700 pb-2">
+            <span>موجودہ حالت (Status):</span>
+            <span id="driverRideStatusText" class="font-bold text-amber-400 uppercase">نئی رائڈ کا انتظار ہے...</span>
+          </div>
+
+          <div class="space-y-2 py-1">
+            <p class="text-xs text-slate-200 font-medium flex items-center gap-2">
+              <i class="fa-solid fa-circle-dot text-brand-500"></i>
+              <span id="driverPickupLabel">کلمہ چوک، لاہور</span>
+            </p>
+            <p class="text-xs text-slate-200 font-medium flex items-center gap-2">
+              <i class="fa-solid fa-location-dot text-rose-500"></i>
+              <span id="driverDropoffLabel">لبرٹی مارکیٹ، گلبرگ</span>
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-center pt-1 border-t border-slate-700/60">
+            <div class="bg-slate-900/60 p-2 rounded-xl">
+              <span class="text-[10px] text-slate-400 block">کرایہ (Fare)</span>
+              <span id="driverFareEst" class="text-sm font-bold text-brand-400">PKR 0</span>
+            </div>
+            <div class="bg-slate-900/60 p-2 rounded-xl">
+              <span class="text-[10px] text-slate-400 block">فاصلہ (Distance)</span>
+              <span id="driverDistanceEst" class="text-sm font-bold text-slate-200">3.2 km</span>
+            </div>
+          </div>
+
+          <button id="driverStepBtn" onclick="simulateDriverStep()" disabled class="w-full bg-slate-700 text-slate-400 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs">
+            <i class="fa-solid fa-route"></i>
+            <span id="driverStepBtnText">کوئی ایکٹو رائڈ نہیں</span>
+          </button>
+        </div>
+
+        <!-- Earnings Breakdown -->
+        <div class="bg-slate-800/40 p-3 rounded-2xl border border-slate-800 grid grid-cols-3 gap-2 text-center text-xs">
+          <div>
+            <span class="text-[10px] text-slate-400 block">آج کی رائڈز</span>
+            <span class="font-bold text-slate-100">14</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block">کل آمدنی</span>
+            <span class="font-bold text-emerald-400">PKR 5,420</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block">کمپنی کمیشن (15%)</span>
+            <span class="font-bold text-amber-400">PKR 813</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ADMIN PANEL SHEET -->
+      <div id="adminSheet" class="hidden bg-slate-900 border-t border-slate-800 p-4 flex-col gap-3 z-20 overflow-y-auto max-h-[75vh]">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-brand-500"></i>
+            <span class="lang-ur">ایڈمن کنٹرول ڈیش بورڈ</span>
+            <span class="lang-en hidden">Control Dashboard</span>
+          </h2>
+          <span class="bg-brand-500/20 text-brand-400 text-[10px] px-2 py-0.5 rounded-full border border-brand-500/30">Live System</span>
+        </div>
+
+        <!-- Admin Metrics -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">فعال سواریاں (Active Rides)</span>
+            <span class="text-base font-bold text-brand-400">18 سواریاں</span>
+          </div>
+          <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">آج کی کل آمدنی</span>
+            <span class="text-base font-bold text-emerald-400">PKR 92,400</span>
+          </div>
+          <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">آن لائن ڈرائیورز</span>
+            <span class="text-base font-bold text-sky-400">56 ڈرائیورز</span>
+          </div>
+          <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">کمپنی کمیشن (15%)</span>
+            <span class="text-base font-bold text-amber-400">PKR 13,860</span>
+          </div>
+        </div>
+
+        <!-- Verification Queue & Logs -->
+        <div class="space-y-2 mt-2">
+          <h3 class="text-xs font-bold text-slate-300">ڈرائیورز ویریفیکیشن درخواستیں</h3>
+          <div class="space-y-1.5 text-xs">
+            <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-white">حمزہ طارق (Honda CG125)</p>
+                <p class="text-[10px] text-slate-400">شناختی کارڈ اور ڈرائیونگ لائسنس موصول ہوا</p>
+              </div>
+              <button onclick="alert('ڈرائیور کی منظوری دے دی گئی ہے!')" class="bg-brand-600 hover:bg-brand-500 text-white text-[10px] px-2.5 py-1 rounded-lg">منظور کریں</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- OTP LOGIN / SIGNUP MODAL -->
+  <div id="loginModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-mobile-screen-button text-brand-400"></i>
+          <span class="lang-ur">فون نمبر سے لاگ ان کریں</span>
+          <span class="lang-en hidden">Login with Phone</span>
+        </h3>
+        <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Step 1: Phone Input -->
+      <div id="otpStep1" class="space-y-3">
+        <p class="text-xs text-slate-400">اپنا پاکستانی موبائل نمبر درج کریں تاکہ آپ کو OTP کوڈ بھیجا جا سکے:</p>
+        <div class="flex items-center dir-ltr bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100">
+          <span class="font-bold text-slate-400 mr-2">+92</span>
+          <input type="tel" id="userPhoneInput" placeholder="300 1234567" class="bg-transparent w-full focus:outline-none font-semibold tracking-wider">
+        </div>
+        <button onclick="sendOTPCode()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-brand-600/30">
+          کود حاصل کریں (Send OTP)
+        </button>
+      </div>
+
+      <!-- Step 2: OTP Verification Input -->
+      <div id="otpStep2" class="hidden space-y-3">
+        <p class="text-xs text-slate-400">ہم نے آپ کے نمبر پر 4 ہندسوں کا کوڈ بھیجا ہے (ٹیسٹ کوڈ: <strong class="text-brand-400">1234</strong>):</p>
+        <div class="flex justify-center gap-2 dir-ltr">
+          <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center bg-slate-800 border border-slate-700 rounded-xl font-bold text-lg focus:border-brand-500 focus:outline-none">
+          <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center bg-slate-800 border border-slate-700 rounded-xl font-bold text-lg focus:border-brand-500 focus:outline-none">
+          <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center bg-slate-800 border border-slate-700 rounded-xl font-bold text-lg focus:border-brand-500 focus:outline-none">
+          <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center bg-slate-800 border border-slate-700 rounded-xl font-bold text-lg focus:border-brand-500 focus:outline-none">
+        </div>
+        <button onclick="verifyOTPCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg">
+          تصدیق کریں اور لاگ ان ہوں
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHOD MODAL -->
+  <div id="paymentModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white">طریقہ ادائیگی کا انتخاب کریں</h3>
+        <button onclick="closePaymentModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-2">
+        <!-- Cash -->
+        <div onclick="selectPaymentMethod('cash', 'نقد رقم (Cash on Ride)', 'fa-money-bill-wave', 'emerald')" class="p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between cursor-pointer transition">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">نقد رقم (Cash)</p>
+              <p class="text-[10px] text-slate-400">سفر کے اختتام پر ڈرائیور کو نقد دیں</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-check text-brand-400"></i>
+        </div>
+
+        <!-- JazzCash -->
+        <div onclick="selectPaymentMethod('jazzcash', 'جاز کیش (JazzCash)', 'fa-mobile-retro', 'rose')" class="p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between cursor-pointer transition">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-mobile-retro"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">جاز کیش (JazzCash Wallet)</p>
+              <p class="text-[10px] text-slate-400">خودکار یا مینوئل آن لائن منتقل کریں</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- EasyPaisa -->
+        <div onclick="selectPaymentMethod('easypaisa', 'ایزی پیسہ (EasyPaisa)', 'fa-wallet', 'green')" class="p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between cursor-pointer transition">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">ایزی پیسہ (EasyPaisa Wallet)</p>
+              <p class="text-[10px] text-slate-400">موبائل والٹ کے ذریعے فوری ادائیگی</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chaudhry Wallet -->
+        <div onclick="selectPaymentMethod('wallet', 'چوہدری والٹ (Balance: PKR 850)', 'fa-coins', 'amber')" class="p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between cursor-pointer transition">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">چوہدری والٹ (Chaudhry Wallet)</p>
+              <p class="text-[10px] text-slate-400">موجودہ بیلنس: PKR 850</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOMING RIDE REQUEST MODAL FOR DRIVER -->
+  <div id="incomingRideModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-brand-500 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="bg-brand-500/20 text-brand-400 text-xs font-bold px-3 py-1 rounded-full border border-brand-500/30">
+          <i class="fa-solid fa-bell animate-pulse"></i> نئی سواری کی درخواست
+        </span>
+        <span class="text-xs text-slate-400">12s</span>
+      </div>
+
+      <div class="text-center py-2">
+        <h3 class="text-2xl font-black text-white" id="incomingFare">PKR 260</h3>
+        <p class="text-xs text-slate-400" id="incomingType">آٹو ریکشہ • 3.2 km</p>
+      </div>
+
+      <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-dot text-brand-500"></i>
+          <span id="incomingPickup" class="font-medium text-slate-200">کلمہ چوک، لاہور</span>
+        </div>
+        <div class="h-px bg-slate-700"></div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-location-dot text-rose-500"></i>
+          <span id="incomingDropoff" class="font-medium text-slate-200">لبرٹی مارکیٹ، گلبرگ</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <button onclick="rejectRideOffer()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl transition text-xs border border-slate-700">
+          مسترد کریں (Decline)
+        </button>
+        <button onclick="acceptRideOffer()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-brand-600/40">
+          قبول کریں (Accept)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIDE RATING & REVIEW MODAL -->
+  <div id="ratingModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">سفر مکمل ہو گیا!</h3>
+        <p class="text-xs text-slate-400 mt-1">اپنے کپتان عثمان کے ساتھ سفر کا تجربہ کیسا رہا؟</p>
+      </div>
+
+      <div class="flex justify-center gap-2 text-2xl text-amber-400 py-2">
+        <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition"></i>
+        <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition"></i>
+        <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition"></i>
+        <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition"></i>
+        <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition"></i>
+      </div>
+
+      <textarea placeholder="کوئی تبصرہ یا رائے لکھیں (آپشنل)..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none"></textarea>
+
+      <button onclick="closeRatingModal()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition">
+        شکریا / ختم کریں
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    /* Global Application State */
+    let currentMode = 'passenger';
+    let currentLang = 'ur';
+    let selectedVehicle = 'bike';
+    let currentPaymentMethod = 'cash';
+
+    const LOCATIONS = [
+      { id: 0, nameUr: "کلمہ چوک، لاہور", nameEn: "Kalma Chowk, Lahore", lat: 31.5036, lng: 74.3318 },
+      { id: 1, nameUr: "لبرٹی مارکیٹ، گلبرگ", nameEn: "Liberty Market, Gulberg", lat: 31.5113, lng: 74.3463 },
+      { id: 2, nameUr: "ڈی ایچ اے فیز 5، رنگ روڈ", nameEn: "DHA Phase 5, Ring Road", lat: 31.4685, lng: 74.4073 },
+      { id: 3, nameUr: "مال روڈ / انارکلی", nameEn: "Mall Road / Anarkali", lat: 31.5601, lng: 74.3142 }
+    ];
+
+    const VEHICLE_RATES = {
+      bike: { base: 60, perKm: 25, speedKmPerMin: 0.6 },
+      auto: { base: 100, perKm: 45, speedKmPerMin: 0.5 },
+      mini: { base: 180, perKm: 75, speedKmPerMin: 0.7 },
+      goplus: { base: 280, perKm: 105, speedKmPerMin: 0.8 }
+    };
+
+    let activeRide = {
+      status: 'idle',
+      pickup: LOCATIONS[0],
+      dropoff: LOCATIONS[1],
+      vehicle: 'bike',
+      fare: 140,
+      distanceKm: 3.2,
+      driverStepIndex: 0
+    };
+
+    /* Leaflet Map Setup */
+    let map, pickupMarker, dropoffMarker, driverMarker, routePolyline;
+
+    function initMap() {
+      map = L.map('map', { zoomControl: false }).setView([LOCATIONS[0].lat, LOCATIONS[0].lng], 13);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19
+      }).addTo(map);
+
+      const pickupIcon = L.divIcon({
+        className: 'custom-pin',
+        html: `<div class="w-7 h-7 bg-brand-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs shadow-lg"><i class="fa-solid fa-location-crosshairs"></i></div>`,
+        iconSize: [28, 28], iconAnchor: [14, 14]
+      });
+
+      const dropoffIcon = L.divIcon({
+        className: 'custom-pin',
+        html: `<div class="w-7 h-7 bg-rose-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs shadow-lg"><i class="fa-solid fa-flag-checkered"></i></div>`,
+        iconSize: [28, 28], iconAnchor: [14, 14]
+      });
+
+      const driverIcon = L.divIcon({
+        className: 'custom-pin driver-pulse',
+        html: `<div class="w-8 h-8 bg-amber-500 rounded-full border-2 border-slate-900 flex items-center justify-center text-slate-900 text-sm font-bold shadow-xl"><i class="fa-solid fa-taxi"></i></div>`,
+        iconSize: [32, 32], iconAnchor: [16, 16]
+      });
+
+      pickupMarker = L.marker([LOCATIONS[0].lat, LOCATIONS[0].lng], { icon: pickupIcon }).addTo(map);
+      dropoffMarker = L.marker([LOCATIONS[1].lat, LOCATIONS[1].lng], { icon: dropoffIcon }).addTo(map);
+      driverMarker = L.marker([LOCATIONS[0].lat + 0.007, LOCATIONS[0].lng + 0.007], { icon: driverIcon }).addTo(map);
+
+      updateMapRoute();
+    }
+
+    function updateMapRoute() {
+      if (routePolyline) map.removeLayer(routePolyline);
+
+      const p1 = [activeRide.pickup.lat, activeRide.pickup.lng];
+      const p2 = [activeRide.dropoff.lat, activeRide.dropoff.lng];
+
+      pickupMarker.setLatLng(p1);
+      dropoffMarker.setLatLng(p2);
+
+      routePolyline = L.polyline([p1, p2], {
+        color: '#10b981',
+        weight: 4,
+        dashArray: '8, 8',
+        opacity: 0.85
+      }).addTo(map);
+
+      map.fitBounds(L.latLngBounds([p1, p2]), { padding: [40, 40] });
+    }
+
+    function recenterMap() {
+      if (map) map.setView([activeRide.pickup.lat, activeRide.pickup.lng], 14);
+    }
+
+    /* Fare Calculation */
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function updateCalculatedPrices() {
+      const dist = calculateDistance(
+        activeRide.pickup.lat, activeRide.pickup.lng,
+        activeRide.dropoff.lat, activeRide.dropoff.lng
+      );
+      activeRide.distanceKm = parseFloat(dist.toFixed(1));
+
+      Object.keys(VEHICLE_RATES).forEach(type => {
+        const rate = VEHICLE_RATES[type];
+        const price = Math.round(rate.base + (dist * rate.perKm));
+        const el = document.getElementById(`price-${type}`);
+        if (el) el.innerText = `PKR ${price}`;
+        
+        if (type === selectedVehicle) {
+          activeRide.fare = price;
+          document.getElementById('bookRidePriceTag').innerText = `PKR ${price}`;
+        }
+      });
+    }
+
+    function selectRideOption(vehicleType) {
+      selectedVehicle = vehicleType;
+      activeRide.vehicle = vehicleType;
+
+      document.querySelectorAll('.ride-opt').forEach(el => {
+        el.classList.remove('border-brand-500', 'bg-brand-500/10');
+        el.classList.add('border-slate-700', 'bg-slate-800/50');
+      });
+
+      const selectedEl = document.getElementById(`rideOpt-${vehicleType}`);
+      if (selectedEl) {
+        selectedEl.classList.remove('border-slate-700', 'bg-slate-800/50');
+        selectedEl.classList.add('border-brand-500', 'bg-brand-500/10');
+      }
+
+      updateCalculatedPrices();
+    }
+
+    function updateLocationsFromSelect() {
+      const pIdx = document.getElementById('pickupSelect').value;
+      const dIdx = document.getElementById('dropoffSelect').value;
+
+      activeRide.pickup = LOCATIONS[pIdx];
+      activeRide.dropoff = LOCATIONS[dIdx];
+
+      updateMapRoute();
+      updateCalculatedPrices();
+    }
+
+    /* Auth & Login Modal */
+    function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
+
+    function sendOTPCode() {
+      const phone = document.getElementById('userPhoneInput').value;
+      if (!phone || phone.length < 7) {
+        alert("براہ کرم درست پاکستانی موبائل نمبر درج کریں!");
+        return;
+      }
+      document.getElementById('otpStep1').classList.add('hidden');
+      document.getElementById('otpStep2').classList.remove('hidden');
+    }
+
+    function verifyOTPCode() {
+      closeLoginModal();
+      document.getElementById('userAuthLabel').innerText = "+92 300 1234567";
+      alert("لاگ ان کامیا ب رہا! خوش آمدید۔");
+    }
+
+    /* Payment Modal */
+    function openPaymentModal() { document.getElementById('paymentModal').classList.remove('hidden'); }
+    function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
+
+    function selectPaymentMethod(id, label, icon, color) {
+      currentPaymentMethod = id;
+      document.getElementById('payMethodLabel').innerText = label;
+      document.getElementById('payMethodBadge').innerHTML = `<i class="fa-solid ${icon}"></i>`;
+      closePaymentModal();
+    }
+
+    /* Booking & Ride Cycle */
+    function initiateRideBooking() {
+      if (activeRide.pickup.id === activeRide.dropoff.id) {
+        alert("پک اپ اور ڈراپ آف لوکیشن ایک ہی نہیں ہو سکتی!");
+        return;
+      }
+      activeRide.status = 'searching';
+      document.getElementById('radarOverlay').classList.remove('hidden');
+
+      setTimeout(() => {
+        document.getElementById('radarOverlay').classList.add('hidden');
+        showDriverOfferModal();
+      }, 2500);
+    }
+
+    function cancelSearch() {
+      activeRide.status = 'idle';
+      document.getElementById('radarOverlay').classList.add('hidden');
+    }
+
+    function showDriverOfferModal() {
+      activeRide.status = 'offered';
+      document.getElementById('incomingFare').innerText = `PKR ${activeRide.fare}`;
+      document.getElementById('incomingType').innerText = `${activeRide.vehicle.toUpperCase()} • ${activeRide.distanceKm} km`;
+      document.getElementById('incomingPickup').innerText = activeRide.pickup.nameUr;
+      document.getElementById('incomingDropoff').innerText = activeRide.dropoff.nameUr;
+      document.getElementById('incomingRideModal').classList.remove('hidden');
+    }
+
+    function rejectRideOffer() {
+      document.getElementById('incomingRideModal').classList.add('hidden');
+      activeRide.status = 'idle';
+    }
+
+    function acceptRideOffer() {
+      document.getElementById('incomingRideModal').classList.add('hidden');
+      activeRide.status = 'enroute';
+      activeRide.driverStepIndex = 1;
+
+      document.getElementById('simulationBanner').classList.remove('hidden');
+      document.getElementById('simBannerText').innerText = "کپتان عثمان پک اپ لوکیشن کی طرف آ رہے ہیں";
+
+      updateDriverStepUI();
+      switchMode('driver');
+    }
+
+    /* Driver Progress Steps */
+    const DRIVER_STEPS = [
+      { status: 'idle', label: 'کوئی ایکٹو رائڈ نہیں', btnText: 'نئی رائڈ کا انتظار ہے...' },
+      { status: 'enroute', label: 'پک اپ لوکیشن پر جا رہے ہیں', btnText: 'پک اپ پر پہنچ گئے (Arrived)' },
+      { status: 'arrived', label: 'پک اپ پر پہنچ گئے! سواری کا انتظار ہے', btnText: 'سفر شروع کریں (Start Ride)' },
+      { status: 'intransit', label: 'منزل کی طرف سفر جاری ہے', btnText: 'سفر مکمل کریں (Complete Ride)' },
+      { status: 'completed', label: 'سفر مکمل ہو گیا!', btnText: 'کرایہ وصول کریں' }
+    ];
+
+    function updateDriverStepUI() {
+      const step = DRIVER_STEPS[activeRide.driverStepIndex];
+      document.getElementById('driverRideStatusText').innerText = step.label;
+      document.getElementById('driverStepBtnText').innerText = step.btnText;
+
+      document.getElementById('driverPickupLabel').innerText = activeRide.pickup.nameUr;
+      document.getElementById('driverDropoffLabel').innerText = activeRide.dropoff.nameUr;
+      document.getElementById('driverFareEst').innerText = `PKR ${activeRide.fare}`;
+      document.getElementById('driverDistanceEst').innerText = `${activeRide.distanceKm} km`;
+
+      const stepBtn = document.getElementById('driverStepBtn');
+      if (activeRide.driverStepIndex > 0) {
+        stepBtn.disabled = false;
+        stepBtn.className = "w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs shadow-lg shadow-brand-600/30 cursor-pointer";
+      } else {
+        stepBtn.disabled = true;
+        stepBtn.className = "w-full bg-slate-700 text-slate-400 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs";
+      }
+    }
+
+    function simulateDriverStep() {
+      activeRide.driverStepIndex++;
+
+      if (activeRide.driverStepIndex === 2) {
+        document.getElementById('simBannerText').innerText = "کپتان پک اپ لوکیشن پر پہنچ چکے ہیں";
+        driverMarker.setLatLng([activeRide.pickup.lat, activeRide.pickup.lng]);
+      } else if (activeRide.driverStepIndex === 3) {
+        document.getElementById('simBannerText').innerText = "سفر جاری ہے...";
+      } else if (activeRide.driverStepIndex === 4) {
+        document.getElementById('simBannerText').innerText = "سفر مکمل ہو چکا ہے!";
+        driverMarker.setLatLng([activeRide.dropoff.lat, activeRide.dropoff.lng]);
+
+        setTimeout(() => {
+          document.getElementById('simulationBanner').classList.add('hidden');
+          document.getElementById('ratingModal').classList.remove('hidden');
+          activeRide.driverStepIndex = 0;
+          updateDriverStepUI();
+        }, 1000);
+      }
+
+      updateDriverStepUI();
+    }
+
+    function toggleDriverStatus() {
+      const isChecked = document.getElementById('driverOnlineToggle').checked;
+      document.getElementById('driverStatusLabel').innerText = isChecked ? "آن لائن" : "آف لائن";
+    }
+
+    function closeRatingModal() {
+      document.getElementById('ratingModal').classList.add('hidden');
+      switchMode('passenger');
+    }
+
+    /* Mode & Language Switchers */
+    function switchMode(mode) {
+      currentMode = mode;
+      ['Passenger', 'Driver', 'Admin'].forEach(m => {
+        const btn = document.getElementById(`modeBtn${m}`);
+        if (m.toLowerCase() === mode) {
+          btn.className = "px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 bg-brand-600 text-white shadow-sm";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200";
+        }
+      });
+
+      document.getElementById('passengerSheet').classList.add('hidden');
+      document.getElementById('driverSheet').classList.add('hidden');
+      document.getElementById('adminSheet').classList.add('hidden');
+
+      if (mode === 'passenger') document.getElementById('passengerSheet').classList.remove('hidden');
+      else if (mode === 'driver') document.getElementById('driverSheet').classList.remove('hidden');
+      else if (mode === 'admin') document.getElementById('adminSheet').classList.remove('hidden');
+
+      setTimeout(() => { if (map) map.invalidateSize(); }, 200);
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ur' ? 'en' : 'ur';
+      document.getElementById('langLabel').innerText = currentLang === 'ur' ? 'English' : 'اردو';
+
+      if (currentLang === 'en') {
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.querySelectorAll('.lang-ur').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.lang-en').forEach(el => el.classList.remove('hidden'));
+      } else {
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.querySelectorAll('.lang-en').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.lang-ur').forEach(el => el.classList.remove('hidden'));
+      }
+    }
+
+    window.onload = function() {
+      initMap();
+      selectRideOption('bike');
+    };
+  </script>
+</body>
+</html>
+```
