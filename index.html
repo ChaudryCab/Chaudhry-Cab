@@ -3,150 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<title>Chaudhry Cab - CCab | Basirpur & Villages Taxi</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui} body{margin:0;background:#f5f5f7}
-.header{background:#000;color:#fff;padding:16px;text-align:center}
-.tabs{display:flex;background:#fff} .tab{flex:1;padding:14px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
-.tab.active{border-color:#ffcc00;background:#fffbe6}
-.card{background:#fff;margin:12px;border-radius:16px;padding:16px;box-shadow:0 4px 12px #0001}
-.input,.select{width:100%;padding:12px;border-radius:10px;border:1.5px solid #ddd;margin-top:8px}
-.btn{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:12px;font-weight:800;margin-top:12px;cursor:pointer}
-.btn-yellow{background:#ffcc00;color:#000} .vehicle-grid{display:flex;gap:8px;margin-top:8px} .vehicle{flex:1;border:2px solid #eee;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
-.vehicle.active{border-color:#000;background:#fff8cc} .row{display:flex;gap:8px} .row>div{flex:1}
-.live-btn{background:#e8f5e9;color:#1b5e20;border:1px dashed #4caf50}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:#f0fdf4}
+.header{background:#000;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
+.header img{width:48px;height:48px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid #16a34a}
+.banner{width:100%;display:block;max-height:380px;object-fit:cover}
+.container{max-width:650px;margin:auto}
+.box{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.fare{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
+.price{background:#16a34a;color:#fff;padding:5px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.btn{display:block;background:#16a34a;color:#fff;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;margin-top:10px}
+.btn-black{background:#000}
+.btn-blue{background:#0ea5e9}
+#map{width:100%;height:380px;border-radius:12px;z-index:1}
+.village-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.village{font-size:12px;background:#dcfce7;color:#14532d;padding:6px 10px;border-radius:20px;cursor:pointer;border:1px solid #86efac}
+.village:hover{background:#16a34a;color:#fff}
 </style>
 </head>
-<body> 
-<div class="header" style="display:flex;align-items:center;justify-content:center;gap:10px">
-<img src="logo.png" style="width:50px;height:50px;border-radius:50%">
-<div><h1 style="margin:0">Chaudhry Cab - CCab</h1><p style="margin:0;font-size:12px">Basirpur | Hujra | Mandi | Depalpur | Okara | Lahore - 24/7</p></div>
-</div> <h1>Chaudhry Cab - CCab</h1><p>Basirpur | Hujra | Mandi Ahmad Abad | Depalpur | Okara | Lahore - 24/7</p></div>
-<div class="tabs">
-<div class="tab active" onclick="showTab('passenger')">🚖 Ride Book</div>
-<div class="tab" onclick="showTab('driver')">🧑‍✈️ Driver Bano</div>
+<body>
+<div class="container">
+
+<div class="header">
+<img src="IMG-20261025-WA0751.jpg">
+<div><div style="font-weight:800">Chaudhry Cab - CCab</div><div style="font-size:11px">Basirpur & 80+ Villages Service - 24/7</div></div>
 </div>
 
-<div id="passengerTab" class="card">
-<input id="pName" class="input" placeholder="Aapka Naam">
-<input id="pPhone" class="input" placeholder="Phone 03XX">
-<div class="row"><div><select id="pFrom" class="select"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option><option>Okara</option><option>Lahore</option><option>Sahiwal</option></select></div><div><select id="pTo" class="select"><option>Okara</option><option>Lahore</option><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option></select></div></div>
-<button class="btn live-btn" onclick="getLiveLocation('passenger')">📍 Live Location Lo</button>
-<div id="pLiveLoc" style="font-size:12px;color:green;display:none;margin-top:5px"></div>
-<div class="vehicle-grid">
-<div class="vehicle active" data-v="Bike" onclick="selectVehicle(this,'pVehicle')">🏍️ Bike</div>
-<div class="vehicle" data-v="Rickshaw" onclick="selectVehicle(this,'pVehicle')">🛺 Rickshaw</div>
-<div class="vehicle" data-v="Mini Car" onclick="selectVehicle(this,'pVehicle')">🚗 Car</div>
-</div>
-<input type="hidden" id="pVehicle" value="Bike">
-<button class="btn" onclick="bookRide()">Book Now</button>
-<div id="pMsg" style="margin-top:10px;font-weight:700"></div>
+<img src="IMG-20261025-WA0751.jpg" class="banner">
+
+<div class="box">
+<h3>💰 فکس کرایہ - Fixed Fares</h3>
+<div class="fare"><span>Basirpur → Hujra</span><span class="price">Rs 800</span></div>
+<div class="fare"><span>Basirpur → Mandi Ahmad Abad</span><span class="price">Rs 1,200</span></div>
+<div class="fare"><span>Basirpur → Depalpur / Haveli Lakha</span><span class="price">Rs 1,800</span></div>
+<div class="fare"><span>Basirpur → Okara</span><span class="price">Rs 2,500</span></div>
+<div class="fare"><span>Basirpur → Lahore</span><span class="price">Rs 6,500</span></div>
+<a class="btn" href="https://wa.me/923000000000?text=Booking%20chahiye">📲 WhatsApp Booking</a>
 </div>
 
-<div id="driverTab" class="card" style="display:none">
-<input id="dName" class="input" placeholder="Driver Naam">
-<input id="dPhone" class="input" placeholder="Phone">
-<input id="dCnic" class="input" placeholder="CNIC">
-<select id="dVehicleType" class="select"><option>Bike</option><option>Rickshaw</option><option>Mini Car</option></select>
-<button class="btn live-btn" onclick="getLiveLocation('driver')">📍 Current Location</button>
-<div id="dLiveLoc" style="font-size:12px;color:green;display:none;margin-top:5px"></div>
-<button class="btn btn-yellow" onclick="registerDriver()">Register as Driver</button>
-<div id="dMsg" style="margin-top:10px;font-weight:700"></div>
+<div class="box">
+<h3>📍 بصیرپور اور گردونواح کے دیہات - Service Area Map</h3>
+<p style="font-size:13px;color:#555;margin-top:0">اپنے گاؤں پر کلک کریں، لوکیشن سیدھا ڈرائیور کو جائے گی</p>
+
+<div id="map"></div>
+
+<div class="village-list">
+<span class="village" onclick="focusVillage(30.5790,73.8367)">Basirpur بصیرپور</span>
+<span class="village" onclick="focusVillage(30.595,73.82)">Tahar Kalaan ٹہار کلاں</span>
+<span class="village" onclick="focusVillage(30.57,73.81)">Chorasta Mian Khan چوراستہ</span>
+<span class="village" onclick="focusVillage(30.56,73.85)">Rukan Pura رکن پورہ</span>
+<span class="village" onclick="focusVillage(30.58,73.87)">Gulsher گلشیر</span>
+<span class="village" onclick="focusVillage(30.565,73.80)">Klasson Hameed کلاسن حمید</span>
+<span class="village" onclick="focusVillage(30.59,73.79)">Bhone Manzebta بھونہ منضبطہ</span>
+<span class="village" onclick="focusVillage(30.60,73.88)">Behlolpur بہلول پور</span>
+<span class="village" onclick="focusVillage(30.45,73.69)">Haveli Lakha حویلی لکھا</span>
+<span class="village" onclick="focusVillage(30.68,73.87)">Hujra Shah Muqeem حجرہ</span>
+<span class="village" onclick="focusVillage(30.54,73.93)">Mandi Ahmad Abad منڈی احمد آباد</span>
+<span class="village" onclick="focusVillage(30.58,73.84)">Saba Wala صبا والا</span>
+</div>
+
+<a id="liveBtn" class="btn btn-blue">📡 میری لائیو لوکیشن بھیجیں</a>
+<p id="locStatus" style="text-align:center;color:#16a34a;font-weight:600;font-size:13px"></p>
+</div>
+
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAlcir0H933LPELz_6kl-mPPNQjbJ6cakY",
-  authDomain: "ccab-basirpur.firebaseapp.com",
-  projectId: "ccab-basirpur",
-  storageBucket: "ccab-basirpur.firebasestorage.app",
-  messagingSenderId: "228594209572",
-  appId: "1:228594209572:web:0143555bebdfb3a3c819b1"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+var map = L.map('map').setView([30.5790, 73.8367], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-function showTab(t){
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  if(t==='passenger'){
-    document.getElementById('passengerTab').style.display='block';
-    document.getElementById('driverTab').style.display='none';
-    document.querySelectorAll('.tab')[0].classList.add('active');
-  }else{
-    document.getElementById('passengerTab').style.display='none';
-    document.getElementById('driverTab').style.display='block';
-    document.querySelectorAll('.tab')[1].classList.add('active');
-  }
-}
-function selectVehicle(el,id){
-  el.parentElement.querySelectorAll('.vehicle').forEach(v=>v.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById(id).value=el.dataset.v;
-}
-let passengerLoc=null,driverLoc=null;
-function getLiveLocation(type){
-  if(!navigator.geolocation){alert("Location support nahi hai");return;}
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const c={lat:pos.coords.latitude,lng:pos.coords.longitude,link:`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`};
-    if(type==='passenger'){
-      passengerLoc=c;
-      document.getElementById('pLiveLoc').style.display='block';
-      document.getElementById('pLiveLoc').innerHTML=`✅ Location mil gayi: <a href='${c.link}' target='_blank'>Map Dekho</a>`;
-    }else{
-      driverLoc=c;
-      document.getElementById('dLiveLoc').style.display='block';
-      document.getElementById('dLiveLoc').innerHTML=`✅ Location mil gayi`;
-    }
-  }, err=>{alert("Location Error: "+err.message)});
+var villages = [
+[30.5790,73.8367,"Basirpur - بصیرپور - Main Office"],
+[30.595,73.82,"Tahar Kalaan - ٹہار کلاں"],
+[30.57,73.81,"Chorasta Mian Khan - چوراستہ میاں خان"],
+[30.56,73.85,"Rukan Pura - رکن پورہ"],
+[30.58,73.87,"Gulsher - گلشیر"],
+[30.565,73.80,"Klasson Hameed - کلاسن حمید"],
+[30.59,73.79,"Bhone Manzebta - بھونہ منضبطہ"],
+[30.60,73.88,"Behlolpur - بہلول پور"],
+[30.45,73.6988,"Haveli Lakha - حویلی لکھا"],
+[30.68,73.87,"Hujra Shah Muqeem - حجرہ شاہ مقیم"],
+[30.54,73.93,"Mandi Ahmad Abad - منڈی احمد آباد"],
+[30.58,73.84,"Saba Wala - صبا والا"]
+];
+
+villages.forEach(function(v){
+  var m = L.marker([v[0],v[1]]).addTo(map);
+  m.bindPopup(`<b>${v[2]}</b><br><a href="https://wa.me/923000000000?text=Mujhe%20${encodeURIComponent(v[2])}%20se%20ride%20chahiye" style="color:green;font-weight:bold">📲 یہاں سے بک کریں</a>`);
+});
+
+function focusVillage(lat,lng){
+  map.setView([lat,lng],14);
 }
 
-async function bookRide(){
-  const name=document.getElementById('pName').value.trim();
-  const phone=document.getElementById('pPhone').value.trim();
-  if(!name || !phone){document.getElementById('pMsg').innerHTML="❌ Naam aur Phone likho";return;}
-  document.getElementById('pMsg').innerHTML="⏳ Booking ho rahi hai...";
-  try{
-    await db.collection("rides").add({
-      customerName:name,
-      phone:phone,
-      from:document.getElementById('pFrom').value,
-      to:document.getElementById('pTo').value,
-      vehicle:document.getElementById('pVehicle').value,
-      liveLocation:passengerLoc || null,
-      status:"pending",
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    document.getElementById('pMsg').innerHTML="✅ Booking ho gayi! Driver jald rabta karega.";
-    document.getElementById('pName').value="";document.getElementById('pPhone').value="";
-  }catch(e){
-    document.getElementById('pMsg').innerHTML="❌ Error: "+e.message;
-    console.log(e);
-  }
-}
-
-async function registerDriver(){
-  const name=document.getElementById('dName').value.trim();
-  const phone=document.getElementById('dPhone').value.trim();
-  const cnic=document.getElementById('dCnic').value.trim();
-  if(!name || !phone){document.getElementById('dMsg').innerHTML="❌ Naam aur Phone likho";return;}
-  document.getElementById('dMsg').innerHTML="⏳ Register ho raha hai...";
-  try{
-    await db.collection("drivers").add({
-      name:name,
-      phone:phone,
-      cnic:cnic,
-      vehicleType:document.getElementById('dVehicleType').value,
-      liveLocation:driverLoc || null,
-      status:"pending",
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    document.getElementById('dMsg').innerHTML="✅ Registration ho gayi! Admin approve karega.";
-  }catch(e){
-    document.getElementById('dMsg').innerHTML="❌ Error: "+e.message;
-  }
+document.getElementById('liveBtn').onclick = function(){
+  let s = document.getElementById('locStatus');
+  s.innerText = "لوکیشن لی جا رہی ہے...";
+  navigator.geolocation.getCurrentPosition(function(pos){
+    let link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+    s.innerHTML = `✅ لوکیشن: <a href="${link}" target="_blank">Map کھولیں</a>`;
+    window.open(`https://wa.me/923000000000?text=Live%20Location:%20${encodeURIComponent(link)}`, '_blank');
+  }, function(){ s.innerText = "Location Allow کریں"; });
 }
 </script>
+
 </body>
 </html>
