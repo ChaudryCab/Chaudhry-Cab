@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaudhry Cab - CCab | Basirpur & Villages Taxi</title>
+<title>Chaudhry Cab - CCab | Adjustable Fare</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:#f0fdf4}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#f0fdf4}
 .header{background:#000;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
 .header img{width:48px;height:48px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid #16a34a}
-.banner{width:100%;display:block;max-height:380px;object-fit:cover}
+.banner{width:100%;display:block;max-height:300px;object-fit:cover}
 .container{max-width:650px;margin:auto}
 .box{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
-.fare{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
-.price{background:#16a34a;color:#fff;padding:5px 10px;border-radius:20px;font-weight:800;font-size:13px}
-.btn{display:block;background:#16a34a;color:#fff;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;margin-top:10px}
-.btn-black{background:#000}
-.btn-blue{background:#0ea5e9}
-#map{width:100%;height:380px;border-radius:12px;z-index:1}
-.village-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.village{font-size:12px;background:#dcfce7;color:#14532d;padding:6px 10px;border-radius:20px;cursor:pointer;border:1px solid #86efac}
-.village:hover{background:#16a34a;color:#fff}
+.btn{display:block;background:#16a34a;color:#fff;text-align:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:800;margin-top:10px;font-size:17px;border:0;width:100%;cursor:pointer}
+.btn-black{background:#000}.btn-blue{background:#0ea5e9}
+#map{width:100%;height:320px;border-radius:12px;z-index:1}
+.fare{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.price-tag{background:#16a34a;color:#fff;padding:4px 10px;border-radius:20px;font-weight:800;font-size:12px;cursor:pointer}
+.price-tag.selected{background:#000;transform:scale(1.1)}
+input[type=range]{width:100%;accent-color:#16a34a}
+input[type=number]{width:100%;padding:12px;border:2px solid #16a34a;border-radius:10px;font-size:18px;font-weight:800;text-align:center}
+.booking-sticky{position:sticky;bottom:0;background:#fff;padding:10px 12px;box-shadow:0 -2px 10px rgba(0,0,0,.15);z-index:30;display:flex;gap:8px}
+.booking-sticky a{flex:1;margin:0}
 </style>
 </head>
 <body>
@@ -30,86 +30,121 @@ body{margin:0;font-family:system-ui;background:#f0fdf4}
 
 <div class="header">
 <img src="IMG-20261025-WA0751.jpg">
-<div><div style="font-weight:800">Chaudhry Cab - CCab</div><div style="font-size:11px">Basirpur & 80+ Villages Service - 24/7</div></div>
+<div><div style="font-weight:800">Chaudhry Cab - CCab</div><div style="font-size:11px">Rider Adjustable Fare - 24/7</div></div>
 </div>
 
 <img src="IMG-20261025-WA0751.jpg" class="banner">
 
-<div class="box">
-<h3>💰 فکس کرایہ - Fixed Fares</h3>
-<div class="fare"><span>Basirpur → Hujra</span><span class="price">Rs 800</span></div>
-<div class="fare"><span>Basirpur → Mandi Ahmad Abad</span><span class="price">Rs 1,200</span></div>
-<div class="fare"><span>Basirpur → Depalpur / Haveli Lakha</span><span class="price">Rs 1,800</span></div>
-<div class="fare"><span>Basirpur → Okara</span><span class="price">Rs 2,500</span></div>
-<div class="fare"><span>Basirpur → Lahore</span><span class="price">Rs 6,500</span></div>
-<a class="btn" href="https://wa.me/923000000000?text=Booking%20chahiye">📲 WhatsApp Booking</a>
+<!-- ADJUSTABLE FARE BOOKING -->
+<div class="box" style="border:2px solid #16a34a">
+<h3 style="margin:0 0 12px;text-align:center">🚖 اپنی مرضی کا کرایہ لگائیں</h3>
+
+<label style="font-size:13px;font-weight:600">1. کہاں سے کہاں جانا ہے؟</label>
+<select id="route" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin:6px 0 12px">
+<option value="800">Basirpur → Hujra Sharif</option>
+<option value="1200">Basirpur → Mandi Ahmad Abad</option>
+<option value="1800">Basirpur → Depalpur / Haveli Lakha</option>
+<option value="2500">Basirpur → Okara</option>
+<option value="6500">Basirpur → Lahore</option>
+<option value="5000">Okara → Lahore</option>
+</select>
+
+<label style="font-size:13px;font-weight:600">2. تجویز کردہ کرایہ - Suggested Fare</label>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px" id="suggested">
+<span class="price-tag" onclick="setFare(this)">Rs 800</span>
+<span class="price-tag" onclick="setFare(this)">Rs 1200</span>
+<span class="price-tag" onclick="setFare(this)">Rs 1800</span>
+<span class="price-tag" onclick="setFare(this)">Rs 2500</span>
+<span class="price-tag" onclick="setFare(this)">Rs 5000</span>
+<span class="price-tag" onclick="setFare(this)">Rs 6500</span>
+</div>
+
+<label style="font-size:13px;font-weight:600">3. آپ اپنی آفر لگائیں - Adjust Price</label>
+<input type="range" id="fareSlider" min="500" max="10000" step="100" value="2500" oninput="updateFare(this.value)">
+<div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+<span>Rs 500</span>
+<input type="number" id="fareInput" value="2500" oninput="updateFare(this.value)">
+<span>Rs 10000</span>
+</div>
+<p style="font-size:12px;color:#666;text-align:center;margin:8px 0 0">👆 سلائیڈر سے کم زیادہ کریں - ڈرائیور آپ کی آفر قبول کرے گا</p>
+
+<div style="background:#f0fdf4;padding:12px;border-radius:10px;text-align:center;margin-top:12px;border:1px dashed #16a34a">
+<div style="font-size:12px">آپ کی آفر</div>
+<div id="finalFare" style="font-size:28px;font-weight:900;color:#16a34a">Rs 2500</div>
+<div id="routeText" style="font-size:12px;color:#555">Basirpur → Hujra Sharif</div>
+</div>
+
+<a class="btn" id="bookBtn" href="#">📲 اس کرایہ پر بک کریں - Book with My Offer</a>
+<a id="liveBtn" class="btn btn-blue">📡 لائیو لوکیشن کے ساتھ بھیجیں</a>
+<p id="locStatus" style="text-align:center;color:#16a34a;font-weight:700;font-size:13px;margin:8px 0 0"></p>
 </div>
 
 <div class="box">
-<h3>📍 بصیرپور اور گردونواح کے دیہات - Service Area Map</h3>
-<p style="font-size:13px;color:#555;margin-top:0">اپنے گاؤں پر کلک کریں، لوکیشن سیدھا ڈرائیور کو جائے گی</p>
-
+<h3>📍 بصیرپور اور دیہات کا نقشہ</h3>
 <div id="map"></div>
-
-<div class="village-list">
-<span class="village" onclick="focusVillage(30.5790,73.8367)">Basirpur بصیرپور</span>
-<span class="village" onclick="focusVillage(30.595,73.82)">Tahar Kalaan ٹہار کلاں</span>
-<span class="village" onclick="focusVillage(30.57,73.81)">Chorasta Mian Khan چوراستہ</span>
-<span class="village" onclick="focusVillage(30.56,73.85)">Rukan Pura رکن پورہ</span>
-<span class="village" onclick="focusVillage(30.58,73.87)">Gulsher گلشیر</span>
-<span class="village" onclick="focusVillage(30.565,73.80)">Klasson Hameed کلاسن حمید</span>
-<span class="village" onclick="focusVillage(30.59,73.79)">Bhone Manzebta بھونہ منضبطہ</span>
-<span class="village" onclick="focusVillage(30.60,73.88)">Behlolpur بہلول پور</span>
-<span class="village" onclick="focusVillage(30.45,73.69)">Haveli Lakha حویلی لکھا</span>
-<span class="village" onclick="focusVillage(30.68,73.87)">Hujra Shah Muqeem حجرہ</span>
-<span class="village" onclick="focusVillage(30.54,73.93)">Mandi Ahmad Abad منڈی احمد آباد</span>
-<span class="village" onclick="focusVillage(30.58,73.84)">Saba Wala صبا والا</span>
 </div>
 
-<a id="liveBtn" class="btn btn-blue">📡 میری لائیو لوکیشن بھیجیں</a>
-<p id="locStatus" style="text-align:center;color:#16a34a;font-weight:600;font-size:13px"></p>
+<div style="height:90px"></div>
 </div>
 
+<div class="booking-sticky">
+<a class="btn" id="stickyBook" href="#" style="background:#16a34a">📲 Rs 2500 پر بک کریں</a>
+<a class="btn btn-black" href="tel:+923000000000">📞 Call</a>
 </div>
 
 <script>
+let currentFare = 2500;
+let currentRoute = "Basirpur → Hujra Sharif";
+
+document.getElementById('route').onchange = function(){
+  currentRoute = this.options[this.selectedIndex].text;
+  currentFare = parseInt(this.value);
+  updateFare(currentFare);
+  document.getElementById('routeText').innerText = currentRoute;
+}
+
+function setFare(el){
+  document.querySelectorAll('.price-tag').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  let val = parseInt(el.innerText.replace(/[^0-9]/g,''));
+  updateFare(val);
+}
+
+function updateFare(val){
+  currentFare = parseInt(val) || 500;
+  document.getElementById('fareInput').value = currentFare;
+  document.getElementById('fareSlider').value = currentFare;
+  document.getElementById('finalFare').innerText = "Rs " + currentFare;
+  document.getElementById('stickyBook').innerText = "📲 Rs " + currentFare + " پر بک کریں";
+  updateLinks();
+}
+
+function updateLinks(){
+  let msg = `Salam CCab!%0A%0ARoute: ${encodeURIComponent(currentRoute)}%0AMeri Offer: Rs ${currentFare}%0A%0AKya aap is fare par ride de sakte hain?`;
+  let link = `https://wa.me/923000000000?text=${msg}`;
+  document.getElementById('bookBtn').href = link;
+  document.getElementById('stickyBook').href = link;
+  // live location button will add location later
+  window._baseMsg = msg;
+}
+
+updateLinks();
+
 var map = L.map('map').setView([30.5790, 73.8367], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-var villages = [
-[30.5790,73.8367,"Basirpur - بصیرپور - Main Office"],
-[30.595,73.82,"Tahar Kalaan - ٹہار کلاں"],
-[30.57,73.81,"Chorasta Mian Khan - چوراستہ میاں خان"],
-[30.56,73.85,"Rukan Pura - رکن پورہ"],
-[30.58,73.87,"Gulsher - گلشیر"],
-[30.565,73.80,"Klasson Hameed - کلاسن حمید"],
-[30.59,73.79,"Bhone Manzebta - بھونہ منضبطہ"],
-[30.60,73.88,"Behlolpur - بہلول پور"],
-[30.45,73.6988,"Haveli Lakha - حویلی لکھا"],
-[30.68,73.87,"Hujra Shah Muqeem - حجرہ شاہ مقیم"],
-[30.54,73.93,"Mandi Ahmad Abad - منڈی احمد آباد"],
-[30.58,73.84,"Saba Wala - صبا والا"]
-];
-
-villages.forEach(function(v){
-  var m = L.marker([v[0],v[1]]).addTo(map);
-  m.bindPopup(`<b>${v[2]}</b><br><a href="https://wa.me/923000000000?text=Mujhe%20${encodeURIComponent(v[2])}%20se%20ride%20chahiye" style="color:green;font-weight:bold">📲 یہاں سے بک کریں</a>`);
+[[30.5790,73.8367,"Basirpur"],[30.595,73.82,"Tahar Kalaan"],[30.56,73.85,"Rukan Pura"],[30.68,73.87,"Hujra"],[30.54,73.93,"Mandi Ahmad Abad"],[30.45,73.6988,"Haveli Lakha"]].forEach(v=>{
+  L.marker([v[0],v[1]]).addTo(map).bindPopup(v[2]);
 });
 
-function focusVillage(lat,lng){
-  map.setView([lat,lng],14);
-}
-
 document.getElementById('liveBtn').onclick = function(){
-  let s = document.getElementById('locStatus');
-  s.innerText = "لوکیشن لی جا رہی ہے...";
+  let s=document.getElementById('locStatus');s.innerText="لوکیشن لی جا رہی ہے...";
   navigator.geolocation.getCurrentPosition(function(pos){
-    let link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-    s.innerHTML = `✅ لوکیشن: <a href="${link}" target="_blank">Map کھولیں</a>`;
-    window.open(`https://wa.me/923000000000?text=Live%20Location:%20${encodeURIComponent(link)}`, '_blank');
-  }, function(){ s.innerText = "Location Allow کریں"; });
+    let link=`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+    s.innerHTML=`✅ لوکیشن مل گئی`;
+    let fullMsg = window._baseMsg + `%0ALive Location: ${encodeURIComponent(link)}`;
+    window.open(`https://wa.me/923000000000?text=${fullMsg}`,'_blank');
+  },function(){s.innerText="Location Allow کریں";});
 }
 </script>
-
 </body>
 </html>
