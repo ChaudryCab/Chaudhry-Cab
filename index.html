@@ -42,16 +42,13 @@ document.getElementById('bookBtn').addEventListener('click', async ()=>{
   const btn=document.getElementById('bookBtn');
   btn.textContent='Saving...'; btn.disabled=true;
   try{
-    await saveRide({name,phone,from,to,date,car,status:'pending'});
+    await saveRide({name,phone,from,to,date,car});
     document.getElementById('msg').style.display='block';
     btn.textContent='Booked ✅';
-  }catch(e){alert(e.message); btn.textContent='Book Now'; btn.disabled=false;}
+  }catch(e){alert(e.message); btn.textContent='Book Now - Confirm'; btn.disabled=false;}
 });
 </script>
-  <script type="module">
-  import { saveRide } from "./firebase.js";
-  window.saveRide = saveRide;
-  console.log("CCab Firebase Connected");
-</script>
+</body>
+</html>
 </body>
 </html>
