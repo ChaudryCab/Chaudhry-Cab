@@ -3,35 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CCab - Chaudhry Cab Basirpur</title>
+<title>CCab - Chaudhry Cab Basirpur - 65+ Villages</title>
 <style>
-body{margin:0;font-family:Arial;background:#f6f6f6}
-.header{background:#111;color:#fff;padding:12px;display:flex;align-items:center;gap:10px}
-.logo{width:44px;height:44px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border:2px solid #fff}
-.box{background:#fff;margin:12px;padding:14px;border-radius:12px}
-input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:15px}
-.btn{width:100%;padding:14px;border:0;border-radius:10px;font-weight:800;font-size:16px;margin-top:10px;color:#fff;cursor:pointer}
-.green{background:#16a34a}.blue{background:#0ea5e9}.black{background:#111}
-.fare{font-size:30px;font-weight:900;color:#16a34a;text-align:center;margin:8px 0}
+body{margin:0;font-family:Arial,system-ui;background:#f6f6f6}
+.header{background:#111;color:#fff;padding:12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{width:50px;height:50px;background:linear-gradient(135deg,#16a34a,#22c55e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #fff;flex-shrink:0}
+.banner{width:100%;background:linear-gradient(90deg,#111,#14532d);color:#fff;padding:14px;display:flex;align-items:center;justify-content:space-between}
+.box{background:#fff;margin:12px;padding:14px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+input,select{width:100%;padding:12px;margin-top:6px;border:1.5px solid #ccc;border-radius:8px;font-size:15px}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;font-weight:800;font-size:16px;margin-top:10px;color:#fff;cursor:pointer;display:block;text-align:center}
+.green{background:#16a34a}.blue{background:#0ea5e9}.black{background:#111}.orange{background:#f59e0b;color:#111}
+.fare{font-size:32px;font-weight:900;color:#16a34a;text-align:center;margin:8px 0}
 </style>
 </head>
 <body>
 
 <div class="header">
-<div class="logo">CC</div>
-<div><b>Chaudhry Cab - CCab</b><br><span style="font-size:11px">Basirpur & 65+ Villages - Rs 100 سے شروع</span></div>
+<div class="logo">CCab</div>
+<div><b>Chaudhry Cab - CCab</b><br><span style="font-size:11px">Basirpur & 65+ Villages - Rs 100 سے شروع - 24/7</span></div>
 </div>
 
-<div class="box" style="background:#111;color:#fff">
-<b>Basirpur & All Villages Taxi</b><br>
-<small>گنڈا سنگھ، طاہرکلاں، ونانوالہ، اعظم چوک، قاری چوک سمیت</small>
+<div class="banner">
+<div>
+<div style="background:#16a34a;display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:800">LIVE</div>
+<div style="font-weight:900;margin-top:4px">Basirpur & All Villages Taxi</div>
+<small>گنڈا سنگھ، طاہرکلاں، ونانوالہ، محمد نگر، طاہر خورد، کوٹ شیر خاں، 8 ڈی سمیت</small>
+</div>
+<div style="font-size:44px">🚖</div>
 </div>
 
 <div class="box">
 <label>نام</label>
 <input id="name" placeholder="احمد">
 
-<label>کہاں سے</label>
+<label>کہاں سے - آپ کا گاؤں / محلہ / چوک</label>
 <select id="from">
 <option>Basirpur بصیرپور</option>
 <option>Ganda Singh گنڈا سنگھ</option>
@@ -61,15 +66,15 @@ input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border
 <option>Bharpur Shah بھرپور شاہ</option>
 <option>Dighi Ahmed Yar ڈگھی احمد یار</option>
 <option>Lari Adda Basirpur لاری اڈا بصیرپور</option>
-<option>Railway Station Basirpur ریلوے اسٹیشن</option>
+<option>Railway Station Basirpur ریلوے اسٹیشن بصیرپور</option>
 <option>Mohalla Dars محلہ درس</option>
-<option>Mohalla Allama Iqbal Town علامہ اقبال ٹائون</option>
-<option>Gali Postmaster Ch Inam ul Haq والی گلی</option>
+<option>Mohalla Allama Iqbal Town محلہ علامہ اقبال ٹائون</option>
+<option>Gali Postmaster Ch Inam ul Haq Kamboh Wali گلی پوسٹماسٹر چوہدری انعام الحق کمبوہ والی</option>
 <option>Ghaus Pura غوث پورہ</option>
 <option>Tariq Pura طارق پورہ</option>
-<option>Thokar Gamman Wahgira ٹھوکر گاماں واہگیرہ</option>
+<option>Thokar Gamman Wahgira ٹھوکر گاماں واہگرہ</option>
 <option>Chak Ahmed Shah چک احمد شاہ</option>
-<option>Chak Ibrahim چک ابراہیم</option>
+<option>Chak Ibrahim چک ابراہیم محلہ</option>
 <option>Petrol Pump پٹرول پمپ</option>
 <option>Khole Mureed کھولے مرید</option>
 <option>Khole Jaimil کھولے جیمل</option>
@@ -86,41 +91,116 @@ input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border
 <option>Gilani Chowk گیلانی چوک</option>
 <option>Gali Sheikhan Wali گلی شیخانوالی</option>
 <option>Mohalla Exchange محلہ ایکسچینج</option>
-<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Hujra حجرہ</option><option>Depalpur دیپالپور</option>
+<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Hujra حجرہ</option><option>Depalpur دیپالپور</option><option>Mandi Ahmad Abad منڈی احمد آباد</option><option>Haveli Lakha حویلی لکھا</option>
 </select>
 
 <label>کہاں جانا ہے</label>
 <select id="to">
-<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Basirpur بصیرپور</option><option>Lari Adda لاری اڈا</option><option>Ganda Singh گنڈا سنگھ</option><option>Tahir Kalan طاہرکلاں</option><option>Azam Chowk اعظم چوک</option><option>Qari Chowk قاری چوک</option><option>Gilani Chowk گیلانی چوک</option>
+<option>Lahore لاہور</option><option>Okara اوکاڑہ</option><option>Sahiwal ساہیوال</option><option>Basirpur بصیرپور</option><option>Lari Adda لاری اڈا</option><option>Railway Station ریلوے اسٹیشن</option><option>Ganda Singh گنڈا سنگھ</option><option>Tahir Kalan طاہرکلاں</option><option>Tahir Khurd طاہر خورد</option><option>Azam Chowk اعظم چوک</option><option>Qari Chowk قاری چوک</option><option>Gilani Chowk گیلانی چوک</option><option>Chowk Hafiz Lal چوک حافظ لال</option><option>Petrol Pump پٹرول پمپ</option><option>Sohag Pul سہاگ پل</option><option>Hujra حجرہ</option><option>Depalpur دیپالپور</option>
 </select>
 
-<div style="margin-top:14px;border:2px solid #16a34a;border-radius:10px;padding:10px;text-align:center">
-<div style="font-weight:800">💰 آپ کی آفر - کم از کم 100 روپے</div>
+<div style="margin-top:14px;border:2.5px solid #16a34a;border-radius:12px;padding:12px;text-align:center;background:#f0fdf4">
+<div style="font-weight:800;font-size:14px">💰 آپ کی آفر - کم از کم 100 روپے</div>
 <div id="show" class="fare">Rs 300</div>
-<input type="range" id="range" min="100" max="10000" step="50" value="300" style="width:100%">
-<div style="display:flex;justify-content:space-between;font-size:11px"><span>100</span><span>10000</span></div>
-<input type="number" id="num" value="300" min="100" style="text-align:center;font-weight:800;border:2px solid #16a34a">
+<input type="range" id="range" min="100" max="10000" step="50" value="300" style="width:100%;accent-color:#16a34a">
+<div style="display:flex;justify-content:space-between;font-size:11px;color:#666"><span>Rs 100</span><span>Rs 10,000</span></div>
+<input type="number" id="num" value="300" min="100" style="text-align:center;font-weight:800;border:2px solid #16a34a;margin-top:8px">
 </div>
 
-<button class="btn green" onclick="book()">📲 رائیڈ بک کریں</button>
-<button class="btn blue" onclick="bookLoc()">📡 لوکیشن کے ساتھ بک کریں</button>
-<p id="st" style="text-align:center;color:green;font-weight:700"></p>
+<button class="btn green" onclick="book()">📲 رائیڈ بک کریں - مسافر</button>
+<button class="btn blue" onclick="bookLoc()">📡 لائیو لوکیشن کے ساتھ بک کریں - مسافر</button>
+<p id="st" style="text-align:center;color:green;font-weight:700;margin-top:8px"></p>
 </div>
 
 <div class="box">
-<b>🚗 ڈرائیور بنیں</b>
-<input id="dname" placeholder="ڈرائیور نام" style="margin-top:10px">
-<input id="dphone" placeholder="0300-1234567" style="margin-top:8px">
-<button class="btn black" onclick="driver()">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
+<b>🚗 ڈرائیور بنیں - Driver Registration</b>
+<input id="dname" placeholder="ڈرائیور نام *" style="margin-top:10px">
+<input id="dphone" placeholder="فون نمبر * 0300-1234567" style="margin-top:8px">
+<select id="darea" style="margin-top:8px">
+<option>Basirpur بصیرپور</option><option>Ganda Singh گنڈا سنگھ</option><option>Tahir Kalan طاہرکلاں</option><option>Tahir Khurd طاہر خورد</option><option>Kot Sher Khan کوٹ شیر خان</option><option>Chak 8/D چک 8 ڈی</option><option>Azam Chowk اعظم چوک</option><option>Qari Chowk قاری چوک</option><option>Ghaus Pura غوث پورہ</option><option>Tariq Pura طارق پورہ</option><option>Gilani Chowk گیلانی چوک</option><option>Lari Adda لاری اڈا</option><option>Railway Station ریلوے اسٹیشن</option>
+</select>
+<button class="btn black" onclick="driverReg()">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
+<button class="btn blue" onclick="driverLoc()">📡 ڈرائیور لائیو لوکیشن کے ساتھ رجسٹریشن</button>
+<p id="dst" style="text-align:center;color:green;font-weight:700;margin-top:8px"></p>
 </div>
 
 <div class="box" style="text-align:center">
-<b>🔧 ایڈمن</b><br>
-<input id="apass" type="password" placeholder="پاس ورڈ ccab123" style="margin-top:8px">
-<button class="btn black" onclick="admin()">ایڈمن لاگ ان</button>
-<p style="font-size:11px;color:#666">یہ بٹن اب کام کرے گا - ccab123</p>
+<b>🔧 ایڈمن پینل</b>
+<input id="apass" type="password" placeholder="پاس ورڈ لکھیں - ccab123" style="margin-top:8px">
+<button class="btn black" onclick="adminLogin()">🔓 ایڈمن لاگ ان - کام کرے گا</button>
+<div id="adminPanel" style="display:none;margin-top:12px;text-align:left;background:#fffbe6;padding:10px;border-radius:10px;border:2px solid #f59e0b">
+<p style="font-weight:800;color:green">✅ ایڈمن لاگ ان کامیاب</p>
+<button class="btn orange" onclick="viewData()">📋 تمام بکنگ اور ڈرائیور دیکھیں</button>
+<div id="adminData" style="margin-top:10px;font-size:13px;max-height:300px;overflow:auto"></div>
+<button class="btn black" onclick="adminLogout()">🔒 لاگ آؤٹ</button>
+</div>
 </div>
 
 <script>
-let fare=300;
-const rg=document.getElementById('range'), nm=document.getElementById('num'), sh=document.getElementById('show
+// FARE MIN 100 - FIXED
+let fare = 300;
+const rg = document.getElementById('range');
+const nm = document.getElementById('num');
+const sh = document.getElementById('show');
+function sync(v){
+ fare = parseInt(v) || 100;
+ if(fare < 100) fare = 100;
+ rg.value = fare;
+ nm.value = fare;
+ sh.innerText = 'Rs ' + fare;
+}
+rg.oninput = (e) => sync(e.target.value);
+nm.oninput = (e) => sync(e.target.value);
+
+// PASSENGER BOOKING
+function book(){
+ let name = document.getElementById('name').value || 'Passenger';
+ let from = document.getElementById('from').value;
+ let to = document.getElementById('to').value;
+ let data = {name, from, to, fare, time: new Date().toLocaleString()};
+ let arr = JSON.parse(localStorage.getItem('ccab_bookings')||'[]'); arr.unshift(data); localStorage.setItem('ccab_bookings', JSON.stringify(arr));
+ let msg = `*CCab Passenger Booking*%0AName: ${name}%0AFrom: ${from}%0ATo: ${to}%0AOffer: Rs ${fare}`;
+ window.open('https://wa.me/923000000000?text='+msg, '_blank');
+}
+
+// PASSENGER LIVE LOCATION
+function bookLoc(){
+ let st = document.getElementById('st');
+ st.innerText = '📡 لوکیشن لی جا رہی ہے...';
+ navigator.geolocation.getCurrentPosition(p=>{
+  let link = `https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+  let name = document.getElementById('name').value || 'Passenger';
+  let from = document.getElementById('from').value;
+  let to = document.getElementById('to').value;
+  let data = {name, from, to, fare, link, time: new Date().toLocaleString()};
+  let arr = JSON.parse(localStorage.getItem('ccab_bookings')||'[]'); arr.unshift(data); localStorage.setItem('ccab_bookings', JSON.stringify(arr));
+  let msg = `*CCab Passenger + Live Location*%0AName: ${name}%0AFrom: ${from}%0ATo: ${to}%0AOffer: Rs ${fare}%0ALocation: ${link}`;
+  window.open('https://wa.me/923000000000?text='+msg, '_blank');
+  st.innerText = '✅ لوکیشن مل گئی - WhatsApp کھل رہا ہے';
+ }, ()=>{ st.innerText = '❌ Location Allow کریں'; });
+}
+
+// DRIVER REGISTRATION
+function driverReg(){
+ let name = document.getElementById('dname').value;
+ let phone = document.getElementById('dphone').value;
+ if(!name || !phone){ alert('نام اور فون نمبر لکھیں'); return; }
+ let area = document.getElementById('darea').value;
+ let data = {name, phone, area, time: new Date().toLocaleString()};
+ let arr = JSON.parse(localStorage.getItem('ccab_drivers')||'[]'); arr.unshift(data); localStorage.setItem('ccab_drivers', JSON.stringify(arr));
+ let msg = `*CCab Driver Registration*%0AName: ${name}%0APhone: ${phone}%0AArea: ${area}`;
+ window.open('https://wa.me/923000000000?text='+msg, '_blank');
+ alert('✅ ڈرائیور رجسٹریشن ہو گئی');
+}
+
+// DRIVER LIVE LOCATION
+function driverLoc(){
+ let st = document.getElementById('dst');
+ st.innerText = '📡 ڈرائیور لوکیشن...';
+ navigator.geolocation.getCurrentPosition(p=>{
+  let link = `https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+  let name = document.getElementById('dname').value;
+  let phone = document.getElementById('dphone').value;
+  if(!name || !phone){ alert('نام اور فون لکھیں'); st.innerText=''; return; }
+  let area = document.getElementById('darea').value;
+  let
