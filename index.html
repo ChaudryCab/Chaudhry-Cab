@@ -10,11 +10,11 @@
 *{box-sizing:border-box;font-family:system-ui} body{margin:0;background:#f5f5f7}
 .header{background:#000;color:#fff;padding:16px;text-align:center}
 .tabs{display:flex;background:#fff} .tab{flex:1;padding:14px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
-.tab.active{border-color:#000;background:#fffbe6}
+.tab.active{border-color:#ffcc00;background:#fffbe6}
 .card{background:#fff;margin:12px;border-radius:16px;padding:16px;box-shadow:0 4px 12px #0001}
-.label{font-size:12px;font-weight:700;margin:10px 0 4px} .input,.select{width:100%;padding:12px;border-radius:10px;border:1.5px solid #ddd}
-.btn{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:12px;font-weight:800;margin-top:12px}
-.btn-yellow{background:#ffcc00;color:#000} .vehicle-grid{display:flex;gap:8px} .vehicle{flex:1;border:2px solid #eee;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.input,.select{width:100%;padding:12px;border-radius:10px;border:1.5px solid #ddd;margin-top:8px}
+.btn{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:12px;font-weight:800;margin-top:12px;cursor:pointer}
+.btn-yellow{background:#ffcc00;color:#000} .vehicle-grid{display:flex;gap:8px;margin-top:8px} .vehicle{flex:1;border:2px solid #eee;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
 .vehicle.active{border-color:#000;background:#fff8cc} .row{display:flex;gap:8px} .row>div{flex:1}
 .live-btn{background:#e8f5e9;color:#1b5e20;border:1px dashed #4caf50}
 </style>
@@ -25,31 +25,34 @@
 <div class="tab active" onclick="showTab('passenger')">🚖 Ride Book</div>
 <div class="tab" onclick="showTab('driver')">🧑‍✈️ Driver Bano</div>
 </div>
+
 <div id="passengerTab" class="card">
 <input id="pName" class="input" placeholder="Aapka Naam">
-<input id="pPhone" class="input" placeholder="Phone 03XX" style="margin-top:8px">
+<input id="pPhone" class="input" placeholder="Phone 03XX">
 <div class="row"><div><select id="pFrom" class="select"><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option><option>Okara</option><option>Lahore</option><option>Sahiwal</option></select></div><div><select id="pTo" class="select"><option>Okara</option><option>Lahore</option><option>Basirpur</option><option>Hujra Shah Muqeem</option><option>Mandi Ahmad Abad</option><option>Depalpur</option></select></div></div>
-<button class="btn live-btn" style="background:#e8f5e9" onclick="getLiveLocation('passenger')">📍 Live Location</button>
-<div id="pLiveLoc" style="font-size:11px;color:green;display:none"></div>
-<div class="vehicle-grid" style="margin-top:8px">
+<button class="btn live-btn" onclick="getLiveLocation('passenger')">📍 Live Location Lo</button>
+<div id="pLiveLoc" style="font-size:12px;color:green;display:none;margin-top:5px"></div>
+<div class="vehicle-grid">
 <div class="vehicle active" data-v="Bike" onclick="selectVehicle(this,'pVehicle')">🏍️ Bike</div>
 <div class="vehicle" data-v="Rickshaw" onclick="selectVehicle(this,'pVehicle')">🛺 Rickshaw</div>
 <div class="vehicle" data-v="Mini Car" onclick="selectVehicle(this,'pVehicle')">🚗 Car</div>
 </div>
 <input type="hidden" id="pVehicle" value="Bike">
 <button class="btn" onclick="bookRide()">Book Now</button>
-<div id="pMsg"></div>
+<div id="pMsg" style="margin-top:10px;font-weight:700"></div>
 </div>
+
 <div id="driverTab" class="card" style="display:none">
 <input id="dName" class="input" placeholder="Driver Naam">
-<input id="dPhone" class="input" placeholder="Phone" style="margin-top:8px">
-<input id="dCnic" class="input" placeholder="CNIC" style="margin-top:8px">
-<select id="dVehicleType" class="select" style="margin-top:8px"><option>Bike</option><option>Rickshaw</option><option>Mini Car</option></select>
+<input id="dPhone" class="input" placeholder="Phone">
+<input id="dCnic" class="input" placeholder="CNIC">
+<select id="dVehicleType" class="select"><option>Bike</option><option>Rickshaw</option><option>Mini Car</option></select>
 <button class="btn live-btn" onclick="getLiveLocation('driver')">📍 Current Location</button>
-<div id="dLiveLoc" style="font-size:11px;color:green;display:none"></div>
-<button class="btn btn-yellow" onclick="registerDriver()">Register</button>
-<div id="dMsg"></div>
+<div id="dLiveLoc" style="font-size:12px;color:green;display:none;margin-top:5px"></div>
+<button class="btn btn-yellow" onclick="registerDriver()">Register as Driver</button>
+<div id="dMsg" style="margin-top:10px;font-weight:700"></div>
 </div>
+
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAlcir0H933LPELz_6kl-mPPNQjbJ6cakY",
@@ -61,8 +64,86 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-function showTab(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(t==='passenger'){document.getElementById('passengerTab').style.display='block';document.getElementById('driverTab').style.display='none';document.querySelectorAll('.tab')[0].classList.add('active')}else{document.getElementById('passengerTab').style.display='none';document.getElementById('driverTab').style.display='block';document.querySelectorAll('.tab')[1].classList.add('active')}}
-function selectVehicle(el,id){el.parentElement.querySelectorAll('.vehicle').forEach(v=>v.classList.remove('active'));el.classList.add('active');document.getElementById(id).value=el.dataset.v}
+
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  if(t==='passenger'){
+    document.getElementById('passengerTab').style.display='block';
+    document.getElementById('driverTab').style.display='none';
+    document.querySelectorAll('.tab')[0].classList.add('active');
+  }else{
+    document.getElementById('passengerTab').style.display='none';
+    document.getElementById('driverTab').style.display='block';
+    document.querySelectorAll('.tab')[1].classList.add('active');
+  }
+}
+function selectVehicle(el,id){
+  el.parentElement.querySelectorAll('.vehicle').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).value=el.dataset.v;
+}
 let passengerLoc=null,driverLoc=null;
-function getLiveLocation(type){navigator.geolocation.getCurrentPosition(pos=>{const c={lat:pos.coords.latitude,lng:pos.coords.longitude,link:`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`};if(type==='passenger'){passengerLoc=c;document.getElementById('pLiveLoc').style.display='block';document.getElementById('pLiveLoc').innerHTML=`✅ ${c.lat}, ${c.lng} <a href='${c.link}' target='_blank'>Map</a>`}else{driverLoc=c;document.getElementById('dLiveLoc').style.display='block';document.getElementById('dLiveLoc').innerHTML=`✅ ${c.lat}, ${c.lng}`}})}
-async function bookRide(){const data={customerName:document.getElementById('pName').value,phone:document.getElementById('pPhone
+function getLiveLocation(type){
+  if(!navigator.geolocation){alert("Location support nahi hai");return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const c={lat:pos.coords.latitude,lng:pos.coords.longitude,link:`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`};
+    if(type==='passenger'){
+      passengerLoc=c;
+      document.getElementById('pLiveLoc').style.display='block';
+      document.getElementById('pLiveLoc').innerHTML=`✅ Location mil gayi: <a href='${c.link}' target='_blank'>Map Dekho</a>`;
+    }else{
+      driverLoc=c;
+      document.getElementById('dLiveLoc').style.display='block';
+      document.getElementById('dLiveLoc').innerHTML=`✅ Location mil gayi`;
+    }
+  }, err=>{alert("Location Error: "+err.message)});
+}
+
+async function bookRide(){
+  const name=document.getElementById('pName').value.trim();
+  const phone=document.getElementById('pPhone').value.trim();
+  if(!name || !phone){document.getElementById('pMsg').innerHTML="❌ Naam aur Phone likho";return;}
+  document.getElementById('pMsg').innerHTML="⏳ Booking ho rahi hai...";
+  try{
+    await db.collection("rides").add({
+      customerName:name,
+      phone:phone,
+      from:document.getElementById('pFrom').value,
+      to:document.getElementById('pTo').value,
+      vehicle:document.getElementById('pVehicle').value,
+      liveLocation:passengerLoc || null,
+      status:"pending",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('pMsg').innerHTML="✅ Booking ho gayi! Driver jald rabta karega.";
+    document.getElementById('pName').value="";document.getElementById('pPhone').value="";
+  }catch(e){
+    document.getElementById('pMsg').innerHTML="❌ Error: "+e.message;
+    console.log(e);
+  }
+}
+
+async function registerDriver(){
+  const name=document.getElementById('dName').value.trim();
+  const phone=document.getElementById('dPhone').value.trim();
+  const cnic=document.getElementById('dCnic').value.trim();
+  if(!name || !phone){document.getElementById('dMsg').innerHTML="❌ Naam aur Phone likho";return;}
+  document.getElementById('dMsg').innerHTML="⏳ Register ho raha hai...";
+  try{
+    await db.collection("drivers").add({
+      name:name,
+      phone:phone,
+      cnic:cnic,
+      vehicleType:document.getElementById('dVehicleType').value,
+      liveLocation:driverLoc || null,
+      status:"pending",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('dMsg').innerHTML="✅ Registration ho gayi! Admin approve karega.";
+  }catch(e){
+    document.getElementById('dMsg').innerHTML="❌ Error: "+e.message;
+  }
+}
+</script>
+</body>
+</html>
