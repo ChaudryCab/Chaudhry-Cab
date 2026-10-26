@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaudhry Cab - CCab</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: #f4f6f9; color: #333; padding-bottom: 30px; }
+  
+  .header {
+    background: linear-gradient(135deg, #052e16, #16a34a);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  .logo-box {
+    width: 55px;
+    height: 55px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 18px;
+    color: #16a34a;
+    border: 3px solid #4ade80;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .header-info h1 { font-size: 20px; color: #ffffff; margin-bottom: 2px; }
+  .header-info p { font-size: 12px; color: #dcfce7; }
+
+  .banner-card {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+  }
+  .banner-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 5px; }
+  .banner-card p { font-size: 13px; opacity: 0.9; }
+
+  .nav-tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 15px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: none;
+    border: none;
+    font-weight: bold;
+    font-size: 15px;
+    color: #4b5563;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+  }
+  .tab-btn.active {
+    color: #16a34a;
+    border-bottom: 3px solid #16a34a;
+    background: #f0fdf4;
+  }
+
+  .container { padding: 0 12px; max-width: 600px; margin: 0 auto; }
+  .box {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 15px;
+  }
+  .box-title {
+    font-size: 17px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 12px;
+    border-right: 4px solid #16a34a;
+    padding-right: 8px;
+  }
+
+  label { font-size: 13px; font-weight: 600; color: #374151; margin-top: 10px; display: block; }
+  input, select {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f9fafb;
+    outline: none;
+  }
+  input:focus, select:focus { border-color: #16a34a; background: #fff; }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .btn-green { background: #16a34a; }
+  .btn-green:hover { background: #15803d; }
+  .btn-blue { background: #0284c7; }
+  .btn-blue:hover { background: #0369a1; }
+  .btn-black { background: #1f2937; }
+  .btn-black:hover { background: #111827; }
+
+  .fare-box {
+    border: 2px dashed #16a34a;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    background: #f0fdf4;
+    margin-top: 15px;
+  }
+  .fare-title { font-size: 13px; color: #166534; font-weight: bold; }
+  .fare-display { font-size: 28px; font-weight: 900; color: #16a34a; margin: 4px 0; }
+
+  #map { height: 200px; width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid #ccc; }
+  .status-msg { text-align: center; font-size: 13px; font-weight: bold; margin-top: 8px; color: #16a34a; }
+  
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-box">CCab</div>
+  <div class="header-info">
+    <h1>Chaudhry Cab (CCab)</h1>
+    <p>بصیرپور اور گردونواح کے تمام دیہات و شہر | 24/7 سروس</p>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('passengerTab')">پسنجر بکنگ</button>
+  <button class="tab-btn" onclick="switchTab('driverTab')">ڈرائیور پورٹل</button>
+  <button class="tab-btn" onclick="switchTab('adminTab')">ایڈمن</button>
+</div>
+
+<div class="container">
+
+  <!-- PASSENGER TAB -->
+  <div id="passengerTab">
+    <div class="banner-card">
+      <h2>🚗 Chaudhry Cab - CCab</h2>
+      <p>بصیرپور، حجرہ، منڈی احمد آباد، دیپالپور، اوکاڑہ، ساہیوال، قصور اور لاہور کے لیے فوری بائیک و کار سروس</p>
+    </div>
+
+    <div class="box">
+      <div class="box-title">📲 رائیڈ آفر پوسٹ کریں</div>
+      
+      <label>آپ کا نام</label>
+      <input type="text" id="pname" placeholder="مثال: احمد خان">
+
+      <label>موبایل نمبر / WhatsApp</label>
+      <input type="tel" id="pphone" placeholder="03001234567">
+
+      <label>پک اپ لوکیشن (کہاں سے)</label>
+      <select id="pfrom"></select>
+
+      <label>ڈراپ آف لوکیشن (کہاں جانا ہے)</label>
+      <select id="pto"></select>
+
+      <div class="fare-box">
+        <div class="fare-title">💰 کرایہ کی پیشکش / آفر (کم از کم 100 روپے)</div>
+        <div id="fareshow" class="fare-display">Rs 300</div>
+        <input type="range" id="farerange" min="100" max="5000" step="50" value="300">
+        <input type="number" id="farenum" value="300" min="100" style="text-align:center; font-weight:bold; margin-top:5px;">
+      </div>
+
+      <button class="btn btn-green" id="btnBook">رائیڈ آفر پوسٹ کریں</button>
+      <button class="btn btn-blue" id="btnGetLoc">📡 میری لائیو لوکیشن دکھائیں</button>
+      <div id="map"></div>
+      <p id="pstatus" class="status-msg"></p>
+    </div>
+
+    <div class="box">
+      <div class="box-title">🟢 دستیاب آن لائن ڈرائیورز</div>
+      <div id="passengerOnlineDrivers"><p style="font-size:12px; color:#666;">اس وقت کوئی ڈرائیور آن لائن نہیں ہے۔</p></div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">📋 تمام موجودہ رائیڈ آفرز</div>
+      <div id="openRidesList"><p style="font-size:12px; color:#666;">کوئی رائیڈ آفر موجود نہیں ہے۔</p></div>
+    </div>
+  </div>
+
+  <!-- DRIVER TAB -->
+  <div id="driverTab" class="hidden">
+    <div class="box">
+      <div class="box-title">🚗 ڈرائیور رجسٹریشن و لاگ ان</div>
+      
+      <label>ڈرائیور کا نام *</label>
+      <input type="text" id="dname" placeholder="محمد علی">
+
+      <label>موبائل / WhatsApp نمبر * (مثال: 03001234567)</label>
+      <input type="tel" id="dphone" placeholder="03001234567">
+
+      <label>لائسنس نمبر *</label>
+      <input type="text" id="dlicense" placeholder="DL-98765">
+
+      <label>گاڑی نمبر *</label>
+      <input type="text" id="dvehicle" placeholder="LEB-5678">
+
+      <label>گاڑی کی قسم *</label>
+      <select id="dcar">
+        <option>مہران / الٹو (Mehran / Alto)</option>
+        <option>کلٹس / ویگن آر (Cultus / WagonR)</option>
+        <option>کرولا / سٹی (Corolla / City)</option>
+        <option>بائیک / رکشہ (Bike / Rickshaw)</option>
+      </select>
+
+      <button class="btn btn-black" id="btnRegisterDriver">ڈرائیور رجسٹر کریں</button>
+      <button class="btn btn-blue" id="btnDriverOnline">📡 آن لائن ہوں / لائیو لوکیشن اپڈیٹ کریں</button>
+      <p id="dstatus" class="status-msg"></p>
+    </div>
+
+    <div class="box">
+      <div class="box-title">📋 مسافروں کی رائیڈ آفرز (بڈنگ کے لیے)</div>
+      <div id="driverOpenRides"><p style="font-size:12px; color:#666;">کوئی رائیڈ آفر موجود نہیں ہے۔</p></div>
+    </div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div id="adminTab" class="hidden">
+    <div class="box">
+      <div class="box-title">🔒 ایڈمن پینل</div>
+      <label>ایڈمن پاس ورڈ درج کریں</label>
+      <input type="password" id="apass" placeholder="پاس ورڈ درج کریں">
+      <button class="btn btn-black" id="btnAdminLogin">لاگ ان کریں</button>
+      <p id="astatus" class="status-msg"></p>
+    </div>
+
+    <div id="adminContent" class="hidden">
+      <div class="box">
+        <div class="box-title">📊 تمام پسنجر بکنگز اور آفرز</div>
+        <div id="adminBookings"></div>
+      </div>
+      <div class="box">
+        <div class="box-title">🚘 تمام رجسٹرڈ ڈرائیورز</div>
+        <div id="adminDrivers"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const locations = [
+  "Basirpur بصیرپور", "Ganda Singh گنڈا سنگھ", "Tahir Kalan طاہرکلاں", "Wanan Wala ونانوالہ", 
+  "Muhammad Nagar محمد نگر", "Tahir Khurd طاہر خورد", "Kot Sher Khan کوٹ شیر خان", "Chak 8/D چک 8 ڈی", 
+  "Kalasan Hameed کلاسن حمید", "Nihal Mahar نہال مہار", "Rohela Tejeka روہیلہ تیجیکا", "Ameera Tejeka امیرا تیجیکا", 
+  "Qasim Ke قاسم کے", "Mahar Daim Ke Mahar مہار دائم کے مہار", "Azam Chowk اعظم چوک", "Qari Chowk قاری چوک", 
+  "Chah Chowki Wala چاہ چوکی والا", "Manah Khagah منہ کھگھہ", "Chowk Hafiz Lal چوک حافظ لال", "Chak Hafiz چک حافظ", 
+  "Lal Lalu لال لالو", "Gadar Rahman گدڑ رحمان", "Saonka سائونکا", "Batak Lali Ke بٹک للی کے", 
+  "Shahamand شہامند", "Bharpur Shah بھرپور شاہ", "Dighi Ahmed Yar ڈگھی احمد یار", "Lari Adda Basirpur لاری اڈا", 
+  "Railway Station ریلوے اسٹیشن", "Mohalla Dars محلہ درس", "Allama Iqbal Town علامہ اقبال ٹائون", 
+  "Gali Postmaster والی گلی", "Ghaus Pura غوث پورہ", "Tariq Pura طارق پورہ", "Thokar Gamman ٹھوکر گاماں", 
+  "Chak Ahmed Shah چک احمد شاہ", "Chak Ibrahim چک ابراہیم", "Petrol Pump پٹرول پمپ", "Khole Mureed کھولے مرید", 
+  "Khole Jaimil کھولے جیمل", "Sohag Pul سہاگ پل", "Chak Bota چک بوٹا", "Mahboob Shah محبوب شاہ", 
+  "Gilani Chowk گیلانی چوک", "Mohalla Exchange ایکسچینج", 
+  "Depalpur دیپالپور", "Hujra Shah Muqaam حجرہ شاہ مقیم", "Haveli Lakha حویلی لکھا", "Okara اوکاڑہ", 
+  "Mandi Ahmad Abad منڈی احمد آباد", "Sahiwal ساہیوال", "Kasur قصور", "Lahore لاہور"
+];
+
+function populateSelects() {
+  const pfrom = document.getElementById('pfrom');
+  const pto = document.getElementById('pto');
+  locations.forEach(loc => {
+    pfrom.add(new Option(loc, loc));
+    pto.add(new Option(loc, loc));
+  });
+}
+populateSelects();
+
+let fare = 300;
+const rg = document.getElementById('farerange'), nm = document.getElementById('farenum'), sh = document.getElementById('fareshow');
+function syncFare(v) {
+  fare = parseInt(v) || 100;
+  if(fare < 100) fare = 100;
+  rg.value = fare; nm.value = fare; sh.innerText = 'Rs ' + fare;
+}
+rg.addEventListener('input', e => syncFare(e.target.value));
+nm.addEventListener('input', e => syncFare(e.target.value));
+
+function switchTab(tabId) {
+  ['passengerTab', 'driverTab', 'adminTab'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById(tabId).classList.remove('hidden');
+  
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  if(tabId==='passengerTab') buttons[0].classList.add('active');
+  if(tabId==='driverTab') buttons[1].classList.add('active');
+  if(tabId==='adminTab') buttons[2].classList.add('active');
+
+  if(tabId === 'passengerTab') {
+    loadOpenRides();
+    loadPassengerOnlineDrivers();
+  }
+  if(tabId === 'driverTab') loadDriverOpenRides();
+}
+
+let map, marker, userLat, userLng;
+function initMap() {
+  map = L.map('map').setView([30.5786, 73.8385], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+}
+initMap();
+
+document.getElementById('btnGetLoc').addEventListener('click', () => {
+  const status = document.getElementById('pstatus');
+  status.innerText = "لوکیشن حاصل کی جا رہی ہے...";
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(p => {
+      userLat = p.coords.latitude;
+      userLng = p.coords.longitude;
+      map.setView([userLat, userLng], 15);
+      if(marker) map.removeLayer(marker);
+      marker = L.marker([userLat, userLng]).addTo(map).bindPopup("آپ کی لائیو لوکیشن").openPopup();
+      status.innerText = "✅ لوکیشن حاصل کر لی گئی ہے!";
+    }, () => { status.innerText = "❌ لوکیشن حاصل کرنے میں ناکامی ہوئی۔"; });
+  }
+});
+
+function openWhatsApp(phone, text) {
+  var cleanPhone = phone.replace(/[^0-9]/g, '');
+  if(cleanPhone.startsWith('0')) {
+    cleanPhone = '92' + cleanPhone.substring(1);
+  }
+  var waUrl = "whatsapp://send?phone=" + cleanPhone + "&text=" + encodeURIComponent(text);
+  window.location.href = waUrl;
+}
+
+document.getElementById('btnBook').addEventListener('click', () => {
+  const name = document.getElementById('pname').value || 'پسنجر';
+  const phone = document.getElementById('pphone').value || '03000000000';
+  const from = document.getElementById('pfrom').value;
+  const to = document.getElementById('pto').value;
+  let locLink = userLat ? `https://maps.google.com/?q=${userLat},${userLng}` : 'فراہم نہیں کی گئی';
+
+  const booking = { id: Date.now(), name, phone, from, to, fare, locLink, status: 'Open Offer' };
+  let bookings = JSON.parse(localStorage.getItem('ccab_bookings') || '[]');
+  bookings.push(booking);
+  localStorage.setItem('ccab_bookings', JSON.stringify(bookings));
+
+  alert('✅ آپ کی رائیڈ آفر کامیابی سے پوسٹ کر دی گئی ہے! اب ڈرائیورز اسے دیکھ کر رابطہ کریں گے۔');
+  document.getElementById('pname').value = '';
+  document.getElementById('pphone').value = '';
+  loadOpenRides();
+});
+
+document.getElementById('btnRegisterDriver').addEventListener('click', () => {
+  const name = document.getElementById('dname').value;
+  const phone = document.getElementById('dphone').value;
+  const lic = document.getElementById('dlicense').value;
+  const veh = document.getElementById('dvehicle').value;
+  const car = document.getElementById('dcar').value;
+
+  if(!name || !phone || !lic || !veh) {
+    alert('تمام خانے پُر کرنا لازمی ہیں!');
+    return;
+  }
+
+  let drivers = JSON.parse(localStorage.getItem('ccab_drivers') || '[]');
+  let index = drivers.findIndex(d => d.phone === phone);
+  
+  if(index === -1) {
+    drivers.push({ name, phone, lic, veh, car, online: false });
+  } else {
+    drivers[index].name = name;
+    drivers[index].lic = lic;
+    drivers[index].veh = veh;
+    drivers[index].car = car;
+  }
+  
+  localStorage.setItem('ccab_drivers', JSON.stringify(drivers));
+  document.getElementById('dstatus').innerText = "✅ ڈرائیور رجسٹرڈ اور محفوظ ہو گیا ہے!";
+});
+
+document.getElementById('btnDriverOnline').addEventListener('click', () => {
+  const phone = document.getElementById('dphone').value.trim();
+  const name = document.getElementById('dname').value.trim();
+  const lic = document.getElementById('dlicense').value.trim();
+  const veh = document.getElementById('dvehicle').value.trim();
+  const car = document.getElementById('dcar').value;
+
+  if(!phone) { 
+    alert('براہ کرم پہلے اوپر والے خانے میں اپنا موبائل / واٹس ایپ نمبر درج کریں!'); 
+    document.getElementById('dphone').focus();
+    return; 
+  }
+
+  let drivers = JSON.parse(localStorage.getItem('ccab_drivers') || '[]');
+  let d = drivers.find(drv => drv.phone === phone);
+
+  if(!d) {
+    d = { name: name || 'ڈرائیور', phone, lic: lic || 'N/A', veh: veh || 'N/A', car, online: true };
+    drivers.push(d);
+  } else {
+    d.online = true;
+    d.name = name || d.name;
+    d.car = car || d.car;
+    d.veh = veh || d.veh;
+  }
+
+  localStorage.setItem('ccab_drivers', JSON.stringify(drivers));
+  document.getElementById('dstatus').innerText = "✅ آپ کامیابی سے آن لائن ہیں!";
+  loadDriverOpenRides();
+  loadPassengerOnlineDrivers();
+});
+
+function loadPassengerOnlineDrivers() {
+  const pOnlineDiv = document.getElementById('passengerOnlineDrivers');
+  let drivers = JSON.parse(localStorage.getItem('ccab_drivers') || '[]');
+  let onlineDrivers = drivers.filter(d => d.online);
+
+  pOnlineDiv.innerHTML = onlineDrivers.length ? onlineDrivers.map(d => `
+    <div class="card" style="border-right: 4px solid #16a34a; background:#f0fdf4;">
+      <b>🟢 ڈرائیور:</b> ${d.name}<br>
+      <b>گاڑی:</b> ${d.car} (${d.veh})<br>
+      <span style="font-size:12px; color:#166534; font-weight:bold;">موبائل: ${d.phone}</span>
+    </div>
+  `).join('') : '<p style="font-size:12px; color:#666;">اس وقت کوئی ڈرائیور آن لائن نہیں ہے۔</p>';
+}
+
+function loadOpenRides() {
+  const openRidesList = document.getElementById('openRidesList');
+  let bookings = JSON.parse(localStorage.getItem('ccab_bookings') || '[]');
+  let openBookings = bookings.filter(b => b.status === 'Open Offer');
+
+  openRidesList.innerHTML = openBookings.length ? openBookings.map(b => `
+    <div class="card" style="border-right: 4px solid #16a34a;">
+      <b>مسافر:</b> ${b.name} (${b.phone})<br>
+      <b>مقام:</b> ${b.from} ➔ ${b.to}<br>
+      <b>آفر کردہ کرایہ:</b> Rs ${b.fare}<br>
+      <span style="color:#16a34a; font-weight:bold;">⏳ اوپن رائیڈ آفر (ڈرائیور کی بڈنگ کا منتظر)</span>
+    </div>
+  `).join('') : '<p style="font-size:12px; color:#666;">کوئی رائیڈ آفر موجود نہیں ہے۔</p>';
+}
+
+function loadDriverOpenRides() {
+  const driverOpenRides = document.getElementById('driverOpenRides');
+  let bookings = JSON.parse(localStorage.getItem('ccab_bookings') || '[]');
+  let openBookings = bookings.filter(b => b.status === 'Open Offer');
+
+  driverOpenRides.innerHTML = openBookings.length ? openBookings.map(b => `
+    <div class="card" style="background:#f0fdf4;">
+      <b>مسافر:</b> ${b.name} | <b>فون:</b> ${b.phone}<br>
+      <b>راستہ:</b> ${b.from} ➔ ${b.to}<br>
+      <b>مسافر کی آفر:</b> Rs ${b.fare}<br>
+      <a href="${b.locLink}" target="_blank">📍 مسافر کی لائیو لوکیشن دیکھیں</a>
+      <label style="margin-top:8px;">اپنی کرایہ آفر (ڈرائیور بڈ) درج کریں:</label>
+      <input type="number" id="driverOffer_${b.id}" value="${b.fare}" style="margin-bottom:5px;">
+      <button onclick="sendDriverOffer(${b.id}, '${b.phone}')" style="background:#0284c7; color:#fff; border:none; padding:8px; border-radius:6px; width:100%; font-weight:bold; cursor:pointer;">💵 مسافر کو اپنی آفر بھیجیں (WhatsApp)</button>
+    </div>
+  `).join('') : '<p style="font-size:12px; color:#666;">اس وقت کوئی رائیڈ آفر دستیاب نہیں ہے۔</p>';
+}
+
+function sendDriverOffer(bookId, passengerPhone) {
+  const offerInput = document.getElementById('driverOffer_' + bookId);
+  const driverBid = offerInput ? offerInput.value : '300';
+  const driverPhoneInput = document.getElementById('dphone').value || 'ڈرائیور';
+  const driverNameInput = document.getElementById('dname').value || 'ڈرائیور';
+
+  const text = `CCab Driver Offer\nDriver Name: ${driverNameInput}\nDriver Phone: ${driverPhoneInput}\nمیری طرف سے کرایہ کی آفر: Rs ${driverBid}\nکیا آپ یہ قبول کرتے ہیں؟`;
+  openWhatsApp(passengerPhone, text);
+}
+
+document.getElementById('btnAdminLogin').addEventListener('click', () => {
+  const pass = document.getElementById('apass').value;
+  const status = document.getElementById('astatus');
+  
+  if(pass === 'ccab6974') {
+    status.innerText = "✅ ایڈمن لاگ ان کامیاب!";
+    status.style.color = "green";
+    document.getElementById('adminContent').classList.remove('hidden');
+    loadAdminData();
+  } else {
+    status.innerText = "❌ غلط پاس ورڈ!";
+    status.style.color = "red";
+  }
+});
+
+function loadAdminData() {
+  const bList = document.getElementById('adminBookings');
+  let bookings = JSON.parse(localStorage.getItem('ccab_bookings') || '[]');
+  bList.innerHTML = bookings.length ? bookings.map(b => `
+    <div class="card">
+      <b>پسنجر:</b> ${b.name} (${b.phone}) | <b>کرایہ:</b> Rs ${b.fare}<br>
+      <b>کہاں سے:</b> ${b.from} ➔ <b>کہاں:</b> ${b.to}<br>
+      <b>سٹیٹس:</b> ${b.status} | <a href="${b.locLink}" target="_blank">📍 لوکیشن</a>
+    </div>
+  `).join('') : '<p>کوئی بکنگ موجود نہیں ہے۔</p>';
+
+  const dList = document.getElementById('adminDrivers');
+  let drivers = JSON.parse(localStorage.getItem('ccab_drivers') || '[]');
+  dList.innerHTML = drivers.length ? drivers.map(d => `
+    <div class="card">
+      <b>نام:</b> ${d.name} (${d.phone})<br>
+      <b>گاڑی:</b> ${d.car} (${d.veh}) | <b>لائسنس:</b> ${d.lic}<br>
+      <b>سٹیٹس:</b> ${d.online ? '🟢 آن لائن' : '🔴 آف لائن'}
+    </div>
+  `).join('') : '<p>کوئی ڈرائیور رجسٹرڈ نہیں ہے۔</p>';
+}
+
+loadOpenRides();
+loadPassengerOnlineDrivers();
+</script>
+</body>
+</html>
