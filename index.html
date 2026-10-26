@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCab - Chaudhry Cab Basirpur</title>
+<style>
+body{margin:0;font-family:Arial;background:#f6f6f6}
+.header{background:#111;color:#fff;padding:12px;display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border:2px solid #fff}
+.box{background:#fff;margin:12px;padding:14px;border-radius:12px}
+input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;font-weight:800;font-size:16px;margin-top:10px;color:#fff;cursor:pointer}
+.green{background:#16a34a}.blue{background:#0ea5e9}.black{background:#111}.red{background:#dc2626}
+.fare{font-size:30px;font-weight:900;color:#16a34a;text-align:center;margin:8px 0}
+.card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-top:8px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="logo">CC</div>
+<div><b>Chaudhry Cab - CCab</b><br><span style="font-size:11px">Basirpur & 65+ Villages - Rs 100 سے شروع</span></div>
+</div>
+
+<div class="box" style="background:#111;color:#fff">
+<b>Basirpur & All Villages Taxi - LIVE + Admin Control</b><br>
+<small>گنڈا سنگھ، طاہرکلاں، ونانوالہ، اعظم چوک، قاری چوک سمیت - دونوں طرف لوکیشن آن</small>
+</div>
+
+<div class="box">
+<label>نام</label>
+<input id="name" placeholder="احمد">
+<label>موبائل *</label>
+<input id="phone" placeholder="0300xxxxxxx">
+
+<label>کہاں سے</label>
+<select id="from"></select>
+
+<label>کہاں جانا ہے</label>
+<select id="to"></select>
+
+<div style="margin-top:14px;border:2px solid #16a34a;border-radius:10px;padding:10px;text-align:center">
+<div style="font-weight:800">💰 آپ کی آفر - کم از کم 100 روپے</div>
+<div id="show" class="fare">Rs 300</div>
+<input type="range" id="range" min="100" max="10000" step="50" value="300" style="width:100%">
+<div style="display:flex;justify-content:space-between;font-size:11px"><span>100</span><span>10000</span></div>
+<input type="number" id="num" value="300" min="100" style="text-align:center;font-weight:800;border:2px solid #16a34a">
+</div>
+
+<button class="btn green" id="btnBook">📲 رائیڈ بک کریں (بغیر اجازت کے)</button>
+<button class="btn blue" id="btnBookLoc">📡 لوکیشن کے ساتھ بک کریں</button>
+<p id="st" style="text-align:center;color:green;font-weight:700"></p>
+</div>
+
+<div class="box">
+<b>🚗 ڈرائیور بنیں (بغیر اجازت کے)</b>
+<input id="dname" placeholder="ڈرائیور نام" style="margin-top:10px">
+<input id="dphone" placeholder="0300-1234567" style="margin-top:8px">
+<button class="btn black" id="btnDriver">🚗 ڈرائیور رجسٹریشن بھیجیں</button>
+<button class="btn blue" id="btnDriverLoc">📡 ڈرائیور لوکیشن کے ساتھ</button>
+<button class="btn green" id="btnOnline">🟢 آن لائن ہوں</button>
+<p id="dst" style="text-align:center;color:green;font-weight:700"></p>
+</div>
+
+<div class="box" style="text-align:center">
+<b>🔧 ایڈمن (کسی کو بھی بلاک/ریجیکٹ کر سکتا ہے)</b><br>
+<input id="apass" type="password" placeholder="پاس ورڈ ccab6974" style="margin-top:8px">
+<button class="btn black" id="btnAdmin">ایڈمن لاگ ان</button>
+<div id="adminPanel" style="display:none;margin-top:12px;text-align:left;">
+<div id="adminDrivers"></div>
+<div id="adminBookings" style="margin-top:10px"></div>
+<div id="blockedList" style="margin-top:10px"></div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAlcir0H933LPELz_6kl-mPPNQjbJ6cakY",
+  authDomain: "ccab-basirpur.firebaseapp.com",
+  databaseURL: "https://ccab-basirpur-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ccab-basirpur",
+  storageBucket: "ccab-basirpur.firebasestorage.app",
+  messagingSenderId: "228594209572",
+  appId: "1:228594209572:web:0143555bebdfb3a3c819b1"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// آپ کے پرانے والے سارے دیہات + نئے - دونوں سائیڈ میں
+const allVillages = [
+"Basirpur بصیرپور","Ganda Singh گنڈا سنگھ","Tahir Kalan طاہرکلاں","Wanan Wala ونانوالہ","Muhammad Nagar محمد نگر","Tahir Khurd طاہر خورد","Kot Sher Khan کوٹ شیر خان","Chak 8/D چک 8 ڈی","Kalasan Hameed کلاسن حمید","Nihal Mahar نہال مہار","Rohela Tejeka روہیلہ تیجیکا","Ameera Tejeka امیرا تیجیکا","Qasim Ke قاسم کے","Mahar Daim Ke Mahar مہار دائم کے مہار","Azam Chowk اعظم چوک","Qari Chowk قاری چوک","Chah Chowki Wala چاہ چوکی والا","Manah Khagah منہ کھگھہ","Chowk Hafiz Lal چوک حافظ لال","Chak Hafiz چک حافظ","Lal Lalu لال لالو","Gadar Rahman گدڑ رحمان","Saonka سائونکا","Batak Lali Ke بٹک للی کے","Shahamand شہامند","Bharpur Shah بھرپور شاہ","Dighi Ahmed Yar ڈگھی احمد یار","Lari Adda Basirpur لاری اڈا بصیرپور","Railway Station Basirpur ریلوے اسٹیشن بصیرپور","Mohalla Dars محلہ درس","Mohalla Allama Iqbal Town محلہ علامہ اقبال ٹائون","Gali Postmaster Ch Inam ul Haq Kamboh Wali گلی پوسٹماسٹر چوہدری انعام الحق کمبوہ والی","Ghaus Pura غوث پورہ","Tariq Pura طارق پورہ","Thokar Gamman Wahgira ٹھوکر گاماں واہگیرہ","Chak Ahmed Shah چک احمد شاہ","Chak Ibrahim چک ابراہیم محلہ","Petrol Pump پٹرول پمپ","Khole Mureed کھولے مرید","Khole Jaimil کھولے جیمل","Sohag Pul سہاگ پل","Chak Ahmed Yar Bota Kot چک احمدیار بوٹا کوٹ","Chak Bota چک بوٹا","Chak Bedi Pakke Narain چک بیدی پکے نرائن","Mahboob Shah محبوب شاہ","Turbat Shah Hussain تربت شاہ حسین","Marha مڑھا","Gali Prokyan Wali گلی پروکیانوالی","Mohalla Sheikhupura محلہ شیخوپورہ","Mohalla Petrol Pump محلہ پٹرول پمپ","Gilani Chowk گیلانی چوک","Gali Sheikhan Wali گلی شیخانوالی","Mohalla Exchange محلہ ایکسچینج","Haveli Lakha حویلی لکھا","Hujra حجرہ شاہ مقیم","Depalpur دیپالپور","Okara اوکاڑہ","Sahiwal ساہیوال","Lahore لاہور","Mandi Ahmad Abad منڈی احمد آباد"
+];
+
+const fromSel=document.getElementById('from'), toSel=document.getElementById('to');
+allVillages.forEach(v=>{ fromSel.add(new Option(v,v)); toSel.add(new Option(v,v)); });
+
+// کرایہ 100
+let fare=300; const rg=document.getElementById('range'), nm=document.getElementById('num'), sh=document.getElementById('show');
+function sync(v){ fare=parseInt(v)||100; if(fare<100) fare=100; rg.value=fare; nm.value=fare; sh.innerText='Rs '+fare; }
+rg.addEventListener('input', e=>sync(e.target.value)); nm.addEventListener('input', e=>sync(e.target.value));
+
+let userLat, userLng, blocked={};
+onValue(ref(db,'blocked'), s=>{ blocked=s.val()||{}; renderBlocked(); });
+function isBlocked(ph){ return blocked[ph]?.blocked; }
+function renderBlocked(){ document.getElementById('blockedList').innerHTML = Object.keys(blocked).length ? '<b>🚫 بلاک لسٹ</b><br>'+Object.values(blocked).map(b=>`${b.phone} <button onclick="unblock('${b.phone}')">Unblock</button>`).join('<br>') : 'کوئی بلاک نہیں'; }
+
+document.getElementById('btnBook').addEventListener('click', ()=>{
+  const ph=document.getElementById('phone').value.trim(); if(!ph){alert('موبائل لکھیں');return;} if(isBlocked(ph)){alert('آپ بلاک ہیں');return;}
+  const name=document.getElementById('name').value||'Passenger'; const from=document.getElementById('from').value; const to=document.getElementById('to').value;
+  const r=push(ref(db,'bookings')); set(r,{id:r.key,name,phone:ph,from,to,fare,status:'Open',time:Date.now()}); alert('✅ بکنگ LIVE - ایڈمن کی اجازت نہیں چاہیے');
+});
+document.getElementById('btnBookLoc').addEventListener('click', ()=>{
+  const ph=document.getElementById('phone').value.trim(); if(!ph){alert('موبائل');return;} if(isBlocked(ph)){alert('بلاک');return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat=p.coords.latitude; userLng=p.coords.longitude;
+    const name=document.getElementById('name').value||'Passenger'; const from=document.getElementById('from').value; const to=document.getElementById('to').value;
+    const link=`https://maps.google.com/?q=${userLat},${userLng}`;
+    const r=push(ref(db,'bookings')); set(r,{id:r.key,name,phone:ph,from,to,fare,link,status:'Open',time:Date.now()}); 
+    document.getElementById('st').innerText='✅ لوکیشن کے ساتھ LIVE';
+  });
+});
+
+document.getElementById('btnDriver').addEventListener('click', ()=>{
+  const ph=document.getElementById('dphone').value.trim(); if(!ph){alert('فون');return;} if(isBlocked(ph)){alert('بلاک');return;}
+  const name=document.getElementById('dname').value||'Driver'; set(ref(db,'drivers/'+ph),{name,phone:ph,online:false,time:Date.now()}); alert('✅ ڈرائیور رجسٹر - بغیر اجازت');
+});
+document.getElementById('btnDriverLoc').addEventListener('click', ()=>{
+  const ph=document.getElementById('dphone').value.trim(); if(!ph){alert('فون');return;} if(isBlocked(ph)){alert('بلاک');return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    const name=document.getElementById('dname').value||'Driver'; const link=`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    set(ref(db,'drivers/'+ph),{name,phone:ph,link,online:false,time:Date.now()}); document.getElementById('dst').innerText='✅ لوکیشن کے ساتھ رجسٹر';
+  });
+});
+document.getElementById('btnOnline').addEventListener('click', ()=>{
+  const ph=document.getElementById('dphone').value.trim(); if(!ph){alert('فون');return;} if(isBlocked(ph)){alert('آپ بلاک ہیں');return;}
+  const name=document.getElementById('dname').value||'Driver'; update(ref(db,'drivers/'+ph),{name,online:true}); document.getElementById('dst').innerText='🟢 آن لائن LIVE';
+});
+
+onValue(ref(db,'drivers
