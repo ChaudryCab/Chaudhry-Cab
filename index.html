@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaudhry Cab - CCab</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: #f4f6f9; color: #333; padding-bottom: 30px; }
+  .header { background: linear-gradient(135deg, #052e16, #16a34a); color: white; padding: 15px 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .logo-box { width: 55px; height: 55px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; color: #16a34a; border: 3px solid #4ade80; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .header-info h1 { font-size: 20px; color: #ffffff; margin-bottom: 2px; } .header-info p { font-size: 12px; color: #dcfce7; }
+  .banner-card { background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
+  .banner-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 5px; } .banner-card p { font-size: 13px; opacity: 0.9; }
+  .nav-tabs { display: flex; background: #fff; border-bottom: 2px solid #e5e7eb; margin-bottom: 15px; } .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; font-weight: bold; font-size: 15px; color: #4b5563; cursor: pointer; border-bottom: 3px solid transparent; } .tab-btn.active { color: #16a34a; border-bottom: 3px solid #16a34a; background: #f0fdf4; }
+  .container { padding: 0 12px; max-width: 600px; margin: 0 auto; }
+  .box { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; }
+  .box-title { font-size: 17px; font-weight: bold; color: #111827; margin-bottom: 12px; border-right: 4px solid #16a34a; padding-right: 8px; }
+  label { font-size: 13px; font-weight: 600; color: #374151; margin-top: 10px; display: block; }
+  input, select { width: 100%; padding: 11px; margin-top: 5px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #f9fafb; outline: none; }
+  input:focus, select:focus { border-color: #16a34a; background: #fff; }
+  .btn { width: 100%; padding: 12px; border: 0; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 12px; color: #fff; cursor: pointer; transition: 0.2s; }
+  .btn-green { background: #16a34a; } .btn-blue { background: #0284c7; } .btn-black { background: #1f2937; } .btn-red { background: #dc2626; }
+  .fare-box { border: 2px dashed #16a34a; border-radius: 10px; padding: 12px; text-align: center; background: #f0fdf4; margin-top: 15px; }
+  .fare-title { font-size: 13px; color: #166534; font-weight: bold; } .fare-display { font-size: 28px; font-weight: 900; color: #16a34a; margin: 4px 0; }
+  #map { height: 200px; width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid #ccc; }
+  .status-msg { text-align: center; font-size: 13px; font-weight: bold; margin-top: 8px; color: #16a34a; }
+  .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-top: 8px; font-size: 13px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="header"><div class="logo-box">CCab</div><div class="header-info"><h1>Chaudhry Cab (CCab)</h1><p>بصیرپور اور گردونواح کے تمام دیہات و شہر | 24/7 LIVE</p></div></div>
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('passengerTab')">پسنجر بکنگ</button>
+  <button class="tab-btn" onclick="switchTab('driverTab')">ڈرائیور پورٹل</button>
+  <button class="tab-btn" onclick="switchTab('adminTab')">ایڈمن</button>
+</div>
+<div class="container">
+  <div id="passengerTab">
+    <div class="banner-card"><h2>🚗 Chaudhry Cab - CCab</h2><p>بصیرپور، حجرہ، منڈی احمد آباد، دیپالپور، اوکاڑہ، ساہیوال، قصور اور لاہور کے لیے فوری بائیک و کار سروس - بغیر ایڈمن اجازت کے</p></div>
+    <div class="box">
+      <div class="box-title">📲 رائیڈ آفر پوسٹ کریں (بغیر ایڈمن اجازت کے)</div>
+      <label>آپ کا نام</label><input type="text" id="pname" placeholder="مثال: احمد خان">
+      <label>موبایل نمبر / WhatsApp *</label><input type="tel" id="pphone" placeholder="03001234567">
+      <label>پک اپ لوکیشن (کہاں سے)</label><select id="pfrom"></select>
+      <label>ڈراپ آف لوکیشن (کہاں جانا ہے)</label><select id="pto"></select>
+      <div class="fare-box"><div class="fare-title">💰 کرایہ کی پیشکش / آفر (کم از کم 100 روپے)</div><div id="fareshow" class="fare-display">Rs 300</div><input type="range" id="farerange" min="100" max="5000" step="50" value="300"><input type="number" id="farenum" value="300" min="100" style="text-align:center; font-weight:bold; margin-top:5px;"></div>
+      <button class="btn btn-green" id="btnBook">رائیڈ آفر پوسٹ کریں (LIVE)</button>
+      <button class="btn btn-blue" id="btnGetLoc">📡 میری لائیو لوکیشن دکھائیں</button>
+      <div id="map"></div><p id="pstatus" class="status-msg"></p>
+    </div>
+    <div class="box"><div class="box-title">🟢 دستیاب آن لائن ڈرائیورز (LIVE)</div><div id="passengerOnlineDrivers"></div></div>
+    <div class="box"><div class="box-title">📋 تمام موجودہ رائیڈ آفرز (LIVE)</div><div id="openRidesList"></div></div>
+  </div>
+  <div id="driverTab" class="hidden">
+    <div class="box">
+      <div class="box-title">🚗 ڈرائیور رجسٹریشن و لاگ ان (بغیر ایڈمن اجازت کے)</div>
+      <label>ڈرائیور کا نام *</label><input type="text" id="dname" placeholder="محمد علی">
+      <label>موبائل / WhatsApp نمبر *</label><input type="tel" id="dphone" placeholder="03001234567">
+      <label>لائسنس نمبر *</label><input type="text" id="dlicense" placeholder="DL-98765">
+      <label>گاڑی نمبر *</label><input type="text" id="dvehicle" placeholder="LEB-5678">
+      <label>گاڑی کی قسم *</label><select id="dcar"><option>مہران / الٹو (Mehran / Alto)</option><option>کلٹس / ویگن آر (Cultus / WagonR)</option><option>کرولا / سٹی (Corolla / City)</option><option>بائیک / رکشہ (Bike / Rickshaw)</option></select>
+      <button class="btn btn-black" id="btnRegisterDriver">ڈرائیور رجسٹر کریں (بغیر اجازت)</button>
+      <button class="btn btn-blue" id="btnDriverOnline">📡 آن لائن ہوں / لائیو لوکیشن</button>
+      <p id="dstatus" class="status-msg"></p>
+    </div>
+    <div class="box"><div class="box-title">📋 مسافروں کی رائیڈ آفرز (بڈنگ - بغیر ایڈمن)</div><div id="driverOpenRides"></div></div>
+  </div>
+  <div id="adminTab" class="hidden">
+    <div class="box"><div class="box-title">🔒 ایڈمن پینل - کسی کو بھی Block/Reject کر سکتے ہیں</div><label>ایڈمن پاس ورڈ درج کریں</label><input type="password" id="apass" placeholder="ccab6974"><button class="btn btn-black" id="btnAdminLogin">لاگ ان کریں</button><p id="astatus" class="status-msg"></p></div>
+    <div id="adminContent" class="hidden">
+      <div class="box"><div class="box-title">📊 تمام پسنجر بکنگز اور آفرز (Reject کر سکتے ہیں)</div><div id="adminBookings"></div></div>
+      <div class="box"><div class="box-title">🚘 تمام رجسٹرڈ ڈرائیورز (Block کر سکتے ہیں)</div><div id="adminDrivers"></div></div>
+      <div class="box"><div class="box-title">🚫 بلاک لسٹ</div><div id="blockedList"></div></div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAlcir0H933LPELz_6kl-mPPNQjbJ6cakY",
+  authDomain: "ccab-basirpur.firebaseapp.com",
+  databaseURL: "https://ccab-basirpur-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ccab-basirpur",
+  storageBucket: "ccab-basirpur.firebasestorage.app",
+  messagingSenderId: "228594209572",
+  appId: "1:228594209572:web:0143555bebdfb3a3c819b1"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const locations = [
+  "Basirpur بصیرپور", "Ganda Singh گنڈا سنگھ", "Tahir Kalan طاہرکلاں", "Wanan Wala ونانوالہ", 
+  "Muhammad Nagar محمد نگر", "Tahir Khurd طاہر خورد", "Kot Sher Khan کوٹ شیر خان", "Chak 8/D چک 8 ڈی", 
+  "Kalasan Hameed کلاسن حمید", "Nihal Mahar نہال مہار", "Rohela Tejeka روہیلہ تیجیکا", "Ameera Tejeka امیرا تیجیکا", 
+  "Qasim Ke قاسم کے", "Mahar Daim Ke Mahar مہار دائم کے مہار", "Azam Chowk اعظم چوک", "Qari Chowk قاری چوک", 
+  "Chah Chowki Wala چاہ چوکی والا", "Manah Khagah منہ کھگھہ", "Chowk Hafiz Lal چوک حافظ لال", "Chak Hafiz چک حافظ", 
+  "Lal Lalu لال لالو", "Gadar Rahman گدڑ رحمان", "Saonka سائونکا", "Batak Lali Ke بٹک للی کے", 
+  "Shahamand شہامند", "Bharpur Shah بھرپور شاہ", "Dighi Ahmed Yar ڈگھی احمد یار", "Lari Adda Basirpur لاری اڈا", 
+  "Railway Station ریلوے اسٹیشن", "Mohalla Dars محلہ درس", "Allama Iqbal Town علامہ اقبال ٹائون", 
+  "Gali Postmaster والی گلی", "Ghaus Pura غوث پورہ", "Tariq Pura طارق پورہ", "Thokar Gamman ٹھوکر گاماں", 
+  "Chak Ahmed Shah چک احمد شاہ", "Chak Ibrahim چک ابراہیم", "Petrol Pump پٹرول پمپ", "Khole Mureed کھولے مرید", 
+  "Khole Jaimil کھولے جیمل", "Sohag Pul سہاگ پل", "Chak Bota چک بوٹا", "Mahboob Shah محبوب شاہ", 
+  "Gilani Chowk گیلانی چوک", "Mohalla Exchange ایکسچینج", 
+  "Depalpur دیپالپور", "Hujra Shah Muqaam حجرہ شاہ مقیم", "Haveli Lakha حویلی لکھا", "Okara اوکاڑہ", 
+  "Mandi Ahmad Abad منڈی احمد آباد", "Sahiwal ساہیوال", "Kasur قصور", "Lahore لاہور"
+];
+function populateSelects() {
+  const pfrom = document.getElementById('pfrom'); const pto = document.getElementById('pto');
+  locations.forEach(loc => { pfrom.add(new Option(loc, loc)); pto.add(new Option(loc, loc)); });
+}
+populateSelects();
+
+let fare = 300;
+const rg = document.getElementById('farerange'), nm = document.getElementById('farenum'), sh = document.getElementById('fareshow');
+function syncFare(v) { fare = parseInt(v) || 100; if(fare < 100) fare = 100; rg.value = fare; nm.value = fare; sh.innerText = 'Rs ' + fare; }
+rg.addEventListener('input', e => syncFare(e.target.value)); nm.addEventListener('input', e => syncFare(e.target.value));
+
+window.switchTab = function(tabId) {
+  ['passengerTab', 'driverTab', 'adminTab'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+  document.getElementById(tabId).classList.remove('hidden');
+  const buttons = document.querySelectorAll('.tab-btn'); buttons.forEach(btn => btn.classList.remove('active'));
+  if(tabId==='passengerTab') buttons[0].classList.add('active'); if(tabId==='driverTab') buttons[1].classList.add('active'); if(tabId==='adminTab') buttons[2].classList.add('active');
+}
+
+let map, marker, userLat, userLng;
+map = L.map('map').setView([30.5786, 73.8385], 13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+document.getElementById('btnGetLoc').addEventListener('click', () => {
+  const status = document.getElementById('pstatus'); status.innerText = "لوکیشن حاصل کی جا رہی ہے...";
+  navigator.geolocation.getCurrentPosition(p => {
+    userLat = p.coords.latitude; userLng = p.coords.longitude;
+    map.setView([userLat, userLng], 15); if(marker) map.removeLayer(marker);
+    marker = L.marker([userLat, userLng]).addTo(map).bindPopup("آپ کی لائیو لوکیشن").openPopup();
+    status.innerText = "✅ لوکیشن حاصل کر لی گئی ہے!";
+  });
+});
+
+function openWhatsApp(phone, text) {
+  var cleanPhone = phone.replace(/[^0-9]/g, ''); if(cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.substring(1);
+  window.location.href = "whatsapp://send?phone=" + cleanPhone + "&text=" + encodeURIComponent(text);
+}
+
+let blockedPhones = {};
+onValue(ref(db,'blocked'), snap=>{ blockedPhones = snap.val()||{}; });
+function isBlocked(ph){ return blockedPhones[ph]?.blocked; }
+
+// 1. PASSENGER BOOKING - بغیر ایڈمن اجازت کے
+document.getElementById('btnBook').addEventListener('click', () => {
+  const phone = document.getElementById('pphone').value.trim();
+  if(!phone){ alert('موبائل لازمی ہے'); return; }
+  if(isBlocked(phone)){ alert('🚫 آپ کو ایڈمن نے بلاک کیا ہے'); return; }
+  const name = document.getElementById('pname').value || 'پسنجر';
+  const from = document.getElementById('pfrom').value; const to = document.getElementById('pto').value;
+  let locLink = userLat ? `https://maps.google.com/?q=${userLat},${userLng}` : 'نہیں';
+  const r = push(ref(db,'bookings')); set(r,{id:r.key,name,phone,from,to,fare,locLink,status:'Open Offer',time:Date.now()});
+  alert('✅ آفر LIVE - ایڈمن کی اجازت کے بغیر پوسٹ ہو گئی');
+});
+
+// 2. DRIVER REGISTER - بغیر ایڈمن اجازت کے
+document.getElementById('btnRegisterDriver').addEventListener('click', () => {
+  const phone = document.getElementById('dphone').value.trim();
+  if(!phone){ alert('موبائل لازمی'); return; }
+  if(isBlocked(phone)){ alert('🚫 آپ بلاک ہیں'); return; }
+  const name = document.getElementById('dname').value||'ڈرائیور'; const lic = document.getElementById('dlicense').value; const veh = document.getElementById('dvehicle').value; const car = document.getElementById('dcar').value;
+  set(ref(db,'drivers/'+phone),{name,phone,lic,veh,car,online:false,time:Date.now()});
+  document.getElementById('dstatus').innerText="✅ رجسٹر ہو گیا - ایڈمن اجازت نہیں چاہیے";
+});
+
+document.getElementById('btnDriverOnline').addEventListener('click', () => {
+  const phone = document.getElementById('dphone').value.trim();
+  if(!phone){ alert('موبائل لکھیں'); return; }
+  if(isBlocked(phone)){ alert('🚫 آپ کو ایڈمن نے بلاک کیا ہے'); document.getElementById('dstatus').innerText="🚫 بلاک ہیں"; return; }
+  const name = document.getElementById('dname').value||'ڈرائیور'; update(ref(db,'drivers/'+phone),{name,online:true,time:Date.now()});
+  document.getElementById('dstatus').innerText="✅ LIVE آن لائن";
+});
+
+// LIVE DATA
+onValue(ref(db,'drivers'), snap=>{
+  const data=snap.val(); const drivers=data?Object.values(data):[];
+  const online=drivers.filter(d=>d.online && !isBlocked(d.phone));
+  document.getElementById('passengerOnlineDrivers').innerHTML = online.length? online.map(d=>`<div class="card" style="border-right:4px solid #16a34a;background:#f0fdf4;"><b>🟢 ${d.name}</b><br>${d.car} (${d.veh})<br>${d.phone}</div>`).join('') : '<p style="font-size:12px;color:#666;">کوئی آن لائن نہیں</p>';
+  document.getElementById('adminDrivers').innerHTML = drivers.map(d=>`<div class="card">${d.name} (${d.phone}) - ${d.online?'🟢 آن':'🔴 آف'} - ${d.car}<br>${isBlocked(d.phone)?`<button onclick="unblockUser('${d.phone}')" class="btn btn-green" style="padding:6px;margin-top:5px;">✅ Unblock</button>`:`<button onclick="blockUser('${d.phone}','driver')" class="btn btn-red" style="padding:6px;margin-top:5px;">🚫 Block / Reject</button>`}</div>`).join('') || '<p>کوئی ڈرائیور نہیں</p>';
+});
+
+onValue(ref(db,'bookings'), snap=>{
+  const data=snap.val(); const bookings=data?Object.values(data).reverse():[];
+  const open=bookings.filter(b=>b.status==='Open Offer' && !isBlocked(b.phone));
+  document.getElementById('openRidesList').innerHTML = open.length? open.map(b=>`<div class="card" style="border-right:4px solid #16a34a;"><b>${b.name}</b> (${b.phone})<br>${b.from} ➔ ${b.to}<br>Rs ${b.fare}</div>`).join('') : '<p style="font-size:12px;color:#666;">کوئی آفر نہیں</p>';
+  document.getElementById('driverOpenRides').innerHTML = open.length? open.map(b=>`<div class="card" style="background:#f0fdf4;"><b>${b.name}</b> | ${b.phone}<br>${b.from} ➔ ${b.to}<br>Rs ${b.fare}<br><a href="${b.locLink}" target="_blank">📍 لوکیشن</a><br><input type="number" id="driverOffer_${b.id}" value="${b.fare}"><button onclick="sendOffer('${b.id}','${b.phone}')" style="background:#0284c7;color:#fff;border:none;padding:8px;border-radius:6px;width:100%;margin-top:5px;font-weight:bold;">💵 آفر بھیجیں (بغیر ایڈمن اجازت)</button></div>`).join('') : '<p>کوئی آفر نہیں</p>';
+  document.getElementById('adminBookings').innerHTML = bookings.map(b=>`<div class="card">${b.name} (${b.phone}) - ${b.from} to ${b.to} - Rs ${b.fare} - ${isBlocked(b.phone)?'🚫 Blocked':'✅ Active'}<br>${isBlocked(b.phone)?`<button onclick="unblockUser('${b.phone}')" class="btn btn-green" style="padding:5px;margin-top:4px;">Unblock</button>`:`<button onclick="blockUser('${b.phone}','passenger')" class="btn btn-red" style="padding:5px;margin-top:4px;">Block / Reject</button>`} <button onclick="deleteBooking('${b.id}')" class="btn btn-black" style="padding:5px;margin-top:4px;">Delete</button></div>`).join('') || '<p>کوئی بکنگ نہیں</p>';
+  document.getElementById('blockedList').innerHTML = Object.keys(blockedPhones).length? Object.values(blockedPhones).map(b=>`<div class="card" style="background:#fee2e2;">${b.phone} (${b.type}) <button onclick="unblockUser('${b.phone}')" style="background:#16a34a;color:#fff;border:0;padding:4px 8px;border-radius:4px;">Unblock</button></div>`).join('') : '<p>کوئی بلاک نہیں</p>';
+});
+
+window.blockUser=function(phone,type){ if(confirm(phone+' کو Block/Reject کرنا ہے؟')){ set(ref(db,'blocked/'+phone),{phone,type,blocked:true,time:Date.now()}); update(ref(db,'drivers/'+phone),{online:false}); } }
+window.unblockUser=function(phone){ remove(ref(db,'blocked/'+phone)); }
+window.deleteBooking=function(id){ if(confirm('Delete کریں؟')) remove(ref(db,'bookings/'+id)); }
+window.sendOffer=function(bookId,passengerPhone){
+  const val=document.getElementById('driverOffer_'+bookId).value; const dName=document.getElementById('dname').value||'ڈرائیور'; const dPhone=document.getElementById('dphone').value;
+  if(isBlocked(dPhone)){ alert('آپ بلاک ہیں'); return; }
+  const text=`CCab Driver Offer (بغیر ایڈمن اجازت)\nDriver: ${dName}\nPhone: ${dPhone}\nOffer: Rs ${val}`; openWhatsApp(passengerPhone,text);
+}
+
+document.getElementById('btnAdminLogin').addEventListener('click', () => {
+  if(document.getElementById('apass').value==='ccab6974'){ document.getElementById('adminContent').classList.remove('hidden'); document.getElementById('astatus').innerText='✅ ایڈمن - آپ کسی کو بھی Block کر سکتے ہیں'; document.getElementById('astatus').style.color='green'; } else { document.getElementById('astatus').innerText='❌ غلط پاس ورڈ'; document.getElementById('astatus').style.color='red'; }
+});
+</script>
+</body>
+</html>
