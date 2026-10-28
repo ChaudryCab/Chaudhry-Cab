@@ -6,11 +6,18 @@
 <title>Chaudhry Cab - CCab</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
   body { background-color: #f4f6f9; color: #333; padding-bottom: 30px; }
-  .header { background: linear-gradient(135deg, #052e16, #16a34a); color: white; padding: 15px 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .header { background: linear-gradient(135deg, #052e16, #16a34a); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .header-left { display: flex; align-items: center; gap: 12px; }
   .logo-box { width: 55px; height: 55px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; color: #16a34a; border: 3px solid #4ade80; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-  .header-info h1 { font-size: 20px; color: #ffffff; margin-bottom: 2px; } .header-info p { font-size: 12px; color: #dcfce7; }
+  .header-info h1 { font-size: 20px; color: #ffffff; margin-bottom: 2px; } 
+  .header-info p { font-size: 12px; color: #dcfce7; }
+  
+  /* SOS Button */
+  .sos-btn { background: #dc2626; color: white; font-weight: 900; font-size: 14px; padding: 10px 16px; border-radius: 30px; border: 2px solid #f87171; cursor: pointer; box-shadow: 0 0 10px rgba(220, 38, 38, 0.6); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
   .banner-card { background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
   .banner-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 5px; } .banner-card p { font-size: 13px; opacity: 0.9; }
   .nav-tabs { display: flex; background: #fff; border-bottom: 2px solid #e5e7eb; margin-bottom: 15px; } .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; font-weight: bold; font-size: 15px; color: #4b5563; cursor: pointer; border-bottom: 3px solid transparent; } .tab-btn.active { color: #16a34a; border-bottom: 3px solid #16a34a; background: #f0fdf4; }
@@ -32,12 +39,16 @@
 </style>
 </head>
 <body>
+
 <div class="header">
-  <div class="logo-box">CCab</div>
-  <div class="header-info">
-    <h1>Chaudhry Cab (CCab)</h1>
-    <p>بصیرپور اور گردونواح کے تمام دیہات و شہر | 24/7 LIVE</p>
+  <div class="header-left">
+    <div class="logo-box">CCab</div>
+    <div class="header-info">
+      <h1>Chaudhry Cab (CCab)</h1>
+      <p>بصیرپور اور گردونواح کے تمام دیہات و شہر | 24/7 LIVE</p>
+    </div>
   </div>
+  <button class="sos-btn" onclick="triggerSOS()">🚨 SOS</button>
 </div>
 
 <div class="nav-tabs">
@@ -71,6 +82,10 @@
       <p id="pstatus" class="status-msg"></p>
     </div>
     <div class="box">
+      <div class="box-title">📅 ڈرائیورز کے پہلے سے طے شدہ روٹس و شیڈول</div>
+      <div id="passengerScheduledRides"></div>
+    </div>
+    <div class="box">
       <div class="box-title">🟢 دستیاب آن لائن ڈرائیورز (LIVE)</div>
       <div id="passengerOnlineDrivers"></div>
     </div>
@@ -99,6 +114,23 @@
       <button class="btn btn-blue" id="btnDriverOnline">📡 آن لائن ہوں / لائیو لوکیشن</button>
       <p id="dstatus" class="status-msg"></p>
     </div>
+
+    <!-- ڈرائیور کا اپنا روٹ اور ٹائم شیڈول پوسٹ کرنے کا آپشن -->
+    <div class="box">
+      <div class="box-title">🗺️ اپنی مرضی کا روٹ اور ٹائم شیڈول پوسٹ کریں</div>
+      <label>شروعاتی مقام (کہاں سے)</label>
+      <input type="text" id="dsFrom" placeholder="مثال: بصیرپور اڈا">
+      <label>آخری منزل (کہاں تک)</label>
+      <input type="text" id="dsTo" placeholder="مثال: اوکاڑہ / لاہور">
+      <label>تجویز کردہ درمیانی اسٹاپس (اگر ہوں)</label>
+      <input type="text" id="dsStops" placeholder="مثال: حجرہ شاہ مقیم، دیپالپور">
+      <label>روانہ ہونے کا وقت اور تاریخ</label>
+      <input type="datetime-local" id="dsTime">
+      <label>کرایہ فی سواری / کل کرایہ (روپے)</label>
+      <input type="number" id="dsFare" placeholder="500">
+      <button class="btn btn-green" id="btnPostSchedule">روٹ اور شیڈول پوسٹ کریں</button>
+    </div>
+
     <div class="box">
       <div class="box-title">📋 مسافروں کی رائیڈ آفرز (بڈنگ)</div>
       <div id="driverOpenRides"></div>
@@ -120,7 +152,7 @@
         <div id="adminBookings"></div>
       </div>
       <div class="box">
-        <div class="box-title">🚘 تمام رجسٹرڈ ڈرائیورز</div>
+        <div class="box-title">🚘 تمام رجسٹرڈ ڈرائیورز (کنٹرول و ریموو)</div>
         <div id="adminDrivers"></div>
       </div>
       <div class="box">
@@ -192,6 +224,13 @@ window.switchTab = function(tabId) {
   }
 }
 
+// SOS فانکشن
+window.triggerSOS = function() {
+  if (confirm("🚨 کیا آپ واقعی ایمرجنسی SOS الرٹ فعال کرنا چاہتے ہیں؟")) {
+    window.location.href = "tel:15";
+  }
+};
+
 let map, marker, userLat, userLng;
 document.addEventListener("DOMContentLoaded", () => {
   map = L.map('map').setView([30.5786, 73.8385], 13);
@@ -234,7 +273,7 @@ let blockedPhones = {};
 onValue(ref(db,'blocked'), snap=>{ blockedPhones = snap.val()||{}; });
 function isBlocked(ph){ return blockedPhones[ph]?.blocked; }
 
-// پسنجر بکنگ (ٹائم اور تاریخ کے ساتھ)
+// پسنجر بکنگ
 document.getElementById('btnBook').addEventListener('click', () => {
   const phone = document.getElementById('pphone').value.trim();
   if(!phone){ alert('موبائل نمبر لازمی ہے'); return; }
@@ -244,7 +283,6 @@ document.getElementById('btnBook').addEventListener('click', () => {
   const to = document.getElementById('pto').value;
   let locLink = userLat ? `https://maps.google.com/?q=${userLat},${userLng}` : 'موجود نہیں';
   
-  // تاریخ اور وقت فارمیٹ کرنا (مثلاً: 27 اکتوبر 2026, دوپہر 02:30)
   const now = new Date();
   const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   const timeString = now.toLocaleDateString('ur-PK', options);
@@ -276,22 +314,63 @@ document.getElementById('btnDriverOnline').addEventListener('click', () => {
   document.getElementById('dstatus').innerText="✅ آپ اب لائیو آن لائن ہیں!";
 });
 
+// ڈرائیور کی جانب سے روٹ و ٹائم شیڈول پوسٹ کرنے کا فنکشن
+document.getElementById('btnPostSchedule').addEventListener('click', () => {
+  const dPhone = document.getElementById('dphone').value.trim();
+  const dName = document.getElementById('dname').value.trim() || 'ڈرائیور';
+  const from = document.getElementById('dsFrom').value.trim();
+  const to = document.getElementById('dsTo').value.trim();
+  const stops = document.getElementById('dsStops').value.trim();
+  const time = document.getElementById('dsTime').value;
+  const fareVal = document.getElementById('dsFare').value;
+
+  if(!dPhone || !from || !to || !time) {
+    alert('براہ کرم ڈرائیور فون نمبر، شروعاتی مقام، آخری منزل اور ٹائم درج کریں!');
+    return;
+  }
+  if(isBlocked(dPhone)){ alert('🚫 آپ بلاک ہیں'); return; }
+
+  const r = push(ref(db, 'schedules'));
+  set(r, {
+    id: r.key, driverName: dName, driverPhone: dPhone,
+    from, to, stops: stops || 'کوئی درمیانی اسٹاپ نہیں',
+    dateTime: time, fare: fareVal || 'حسبِ منشا', timePosted: Date.now()
+  });
+
+  alert('✅ آپ کا روٹ اور شیڈول کامیابی سے پوسٹ ہو گیا ہے!');
+});
+
 // لائیو ڈیٹا سنک
 onValue(ref(db,'drivers'), snap=>{
   const data=snap.val(); const drivers=data?Object.values(data):[];
   const online=drivers.filter(d=>d.online && !isBlocked(d.phone));
   document.getElementById('passengerOnlineDrivers').innerHTML = online.length? online.map(d=>`<div class="card" style="border-right:4px solid #16a34a;background:#f0fdf4;"><b>🟢 ${d.name}</b><br>${d.car} (${d.veh})<br>${d.phone}</div>`).join('') : '<p style="font-size:12px;color:#666;">کوئی ڈرائیور آن لائن نہیں ہے</p>';
-  document.getElementById('adminDrivers').innerHTML = drivers.map(d=>`<div class="card">${d.name} (${d.phone}) - ${d.online?'🟢 آن لائن':'🔴 آف لائن'} - ${d.car}<br>${isBlocked(d.phone)?`<button onclick="unblockUser('${d.phone}')" class="btn btn-green" style="padding:6px;margin-top:5px;">✅ ان بلاک کریں</button>`:`<button onclick="blockUser('${d.phone}','driver')" class="btn btn-red" style="padding:6px;margin-top:5px;">🚫 بلاک کریں</button>`}</div>`).join('') || '<p>کوئی رجسٹرڈ ڈرائیور نہیں</p>';
+  
+  // ایڈمن کنٹرول میں ریموو ڈرائیور کا بٹن
+  document.getElementById('adminDrivers').innerHTML = drivers.map(d=>`<div class="card">${d.name} (${d.phone}) - ${d.online?'🟢 آن لائن':'🔴 آف لائن'} - ${d.car}<br>${isBlocked(d.phone)?`<button onclick="unblockUser('${d.phone}')" class="btn btn-green" style="padding:6px;margin-top:5px;">✅ ان بلاک کریں</button>`:`<button onclick="blockUser('${d.phone}','driver')" class="btn btn-red" style="padding:6px;margin-top:5px;">🚫 بلاک کریں</button>`} <button onclick="deleteDriver('${d.phone}')" class="btn btn-black" style="padding:6px;margin-top:5px;">🗑️ ڈرائیور ریموو کریں</button></div>`).join('') || '<p>کوئی رجسٹرڈ ڈرائیور نہیں</p>';
+});
+
+// ڈرائیورز کے شیڈولڈ روٹس ڈسپلے کرنا
+onValue(ref(db, 'schedules'), snap => {
+  const data = snap.val(); const list = data ? Object.values(data).reverse() : [];
+  document.getElementById('passengerScheduledRides').innerHTML = list.length ? list.map(s => `
+    <div class="card" style="border-right:4px solid #0284c7; background:#f0f9ff;">
+      <b>🚗 ڈرائیور: ${s.driverName}</b> (${s.driverPhone})<br>
+      <b>روٹ:</b> ${s.from} ➔ ${s.to}<br>
+      <b>تجویز کردہ اسٹاپس:</b> ${s.stops}<br>
+      <b>وقت/تاریخ:</b> ${s.dateTime.replace('T', ' ')}<br>
+      <b>کرایہ:</b> Rs ${s.fare}<br>
+      <button onclick="openWhatsApp('${s.driverPhone}', 'سلام! میں آپ کی شیڈول شدہ گاڑی (روٹ: ${s.from} تا ${s.to}) میں سیٹ بک کرنا چاہتا ہوں۔')" class="btn btn-blue" style="padding:6px;margin-top:5px;">💬 رابطہ کریں (WhatsApp)</button>
+    </div>
+  `).join('') : '<p style="font-size:12px;color:#666;">کوئی شیڈول شدہ روٹ موجود نہیں</p>';
 });
 
 onValue(ref(db,'bookings'), snap=>{
   const data=snap.val(); const bookings=data?Object.values(data).reverse():[];
   const open=bookings.filter(b=>b.status==='Open Offer' && !isBlocked(b.phone));
   
-  // مسافروں کے لیے تمام اوپن آفرز (تاریخ اور وقت کے ساتھ)
   document.getElementById('openRidesList').innerHTML = open.length? open.map(b=>`<div class="card" style="border-right:4px solid #16a34a;"><b>${b.name}</b> (${b.phone})<br>${b.from} ➔ ${b.to}<br><b>Rs ${b.fare}</b><span class="time-text">🕒 وقت: ${b.timeStr || 'حالیہ'}</span></div>`).join('') : '<p style="font-size:12px;color:#666;">کوئی رائیڈ آفر موجود نہیں</p>';
   
-  // ڈرائیورز کے لیے آفرز (جیسے ہی بکنگ پر کلک ہو گا، یہ ڈرائیور کی سکرین سے ہٹ جائے گی)
   document.getElementById('driverOpenRides').innerHTML = open.length? open.map(b=>`<div class="card" style="background:#f0fdf4;"><b>${b.name}</b> | ${b.phone}<br>${b.from} ➔ ${b.to}<br><b>Rs ${b.fare}</b><span class="time-text">🕒 وقت: ${b.timeStr || 'حالیہ'}</span><br><a href="${b.locLink}" target="_blank" style="display:inline-block; margin-top:4px;">📍 مسافر کی لوکیشن دیکھیں</a><br><input type="number" id="driverOffer_${b.id}" value="${b.fare}"><button onclick="sendOffer('${b.id}','${b.phone}')" style="background:#0284c7;color:#fff;border:none;padding:8px;border-radius:6px;width:100%;margin-top:5px;font-weight:bold;">💵 آفر واٹس ایپ پر بھیجیں</button></div>`).join('') : '<p>کوئی رائیڈ دستیاب نہیں</p>';
   
   document.getElementById('adminBookings').innerHTML = bookings.map(b=>`<div class="card">${b.name} (${b.phone}) - ${b.from} to ${b.to} - Rs ${b.fare} - ${b.status} - ${isBlocked(b.phone)?'🚫 بلاک شدہ':'✅ فعال'}<br><span class="time-text">🕒 وقت: ${b.timeStr || ''}</span><br>${isBlocked(b.phone)?`<button onclick="unblockUser('${b.phone}')" class="btn btn-green" style="padding:5px;margin-top:4px;">ان بلاک</button>`:`<button onclick="blockUser('${b.phone}','passenger')" class="btn btn-red" style="padding:5px;margin-top:4px;">بلاک کریں</button>`} <button onclick="deleteBooking('${b.id}')" class="btn btn-black" style="padding:5px;margin-top:4px;">حذف کریں</button></div>`).join('') || '<p>کوئی بکنگ نہیں</p>';
@@ -307,6 +386,14 @@ window.blockUser = function(phone, type){
 window.unblockUser = function(phone){ remove(ref(db,'blocked/'+phone)); }
 window.deleteBooking = function(id){ if(confirm('کیا آپ اسے حذف کرنا چاہتے ہیں؟')) remove(ref(db,'bookings/'+id)); }
 
+// ایڈمن کے لیے ڈرائیور کو مکمل ریموو کرنے کا فنکشن
+window.deleteDriver = function(phone){
+  if(confirm('کیا آپ اس ڈرائیور (' + phone + ') کو سسٹم سے بالکل ختم / ریموو کرنا چاہتے ہیں؟')) {
+    remove(ref(db, 'drivers/' + phone));
+    alert('ڈرائیور کامیابی سے ریموو کر دیا گیا ہے۔');
+  }
+}
+
 window.sendOffer = function(bookId, passengerPhone){
   const val = document.getElementById('driverOffer_'+bookId).value; 
   const dName = document.getElementById('dname').value || 'ڈرائیور'; 
@@ -315,9 +402,7 @@ window.sendOffer = function(bookId, passengerPhone){
   
   const text = `CCab ڈرائیور آفر\nنام: ${dName}\nفون: ${dPhone}\nکرایہ کی آفر: Rs ${val}`; 
   
-  // جیسے ہی ڈرائیور واٹس ایپ بٹن دبائے گا، اس بکنگ کا اسٹیٹس 'Booked' ہو جائے گا اور یہ ڈرائیورز کی لسٹ سے غائب ہو جائے گی
   update(ref(db,'bookings/'+bookId), { status: 'Booked' });
-
   openWhatsApp(passengerPhone, text);
 }
 
