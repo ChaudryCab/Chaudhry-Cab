@@ -28,8 +28,8 @@
   label { font-size: 13px; font-weight: 600; color: #374151; margin-top: 10px; display: block; }
   input, select { width: 100%; padding: 11px; margin-top: 5px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #f9fafb; outline: none; }
   input:focus, select:focus { border-color: #16a34a; background: #fff; }
-  .btn { width: 100%; padding: 12px; border: 0; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 12px; color: #fff; cursor: pointer; transition: 0.2s; }
-  .btn-green { background: #16a34a; } .btn-blue { background: #0284c7; } .btn-black { background: #1f2937; } .btn-red { background: #dc2626; } .btn-gray { background: #6b7280; }
+  .btn { width: 100%; padding: 12px; border: 0; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 12px; color: #fff; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; text-align: center; }
+  .btn-green { background: #16a34a; } .btn-blue { background: #0284c7; } .btn-black { background: #1f2937; } .btn-red { background: #dc2626; } .btn-gray { background: #6b7280; } .btn-whatsapp { background: #25d366; }
   .fare-box { border: 2px dashed #16a34a; border-radius: 10px; padding: 12px; text-align: center; background: #f0fdf4; margin-top: 15px; }
   .fare-title { font-size: 13px; color: #166534; font-weight: bold; } .fare-display { font-size: 28px; font-weight: 900; color: #16a34a; margin: 4px 0; }
   #map { height: 200px; width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid #ccc; }
@@ -46,7 +46,7 @@
     <div class="logo-box">CCab</div>
     <div class="header-info">
       <h1>Chaudhry Cab (CCab)</h1>
-      <p>بصیرپور اور گردونواح کے تمام دیہات و شہر | 24/7 LIVE</p>
+      <p>بصیرپور اور تمام بڑے شہروں کے لیے سروس | 24/7 LIVE</p>
     </div>
   </div>
   <button class="sos-btn" onclick="triggerSOS()">🚨 SOS</button>
@@ -63,8 +63,16 @@
   <div id="passengerTab">
     <div class="banner-card">
       <h2>🚗 Chaudhry Cab - CCab</h2>
-      <p>بصیرپور، حجرہ، منڈی احمد آباد، دیپالپور، اوکاڑہ، ساہیوال، قصور اور لاہور کے لیے فوری بائیک، کار، بس و ٹرک سروس</p>
+      <p>بصیرپور، اوکاڑہ، ساہیوال، فیصل آباد، ملتان، گوجرانوالہ، راولپنڈی، اسلام آباد، لاہور اور دیگر شہروں کے لیے فوری بائیک، کار، بس و ٹرک سروس</p>
     </div>
+
+    <!-- واٹس ایپ رابطہ کا بٹن -->
+    <div class="box" style="text-align: center; background: #f0fdf4;">
+      <div class="box-title" style="text-align: right;">💬 واٹس ایپ سپورٹ</div>
+      <p style="font-size: 13px; margin-bottom: 8px; color: #166534;">کسی بھی قسم کی معلومات یا مدد کیلئے ہمارے واٹس ایپ نمبر پر رابطہ کریں</p>
+      <a href="https://wa.me/923422477885?text=سلام!%20مجھے%20CCab%20کے%20متعلق%20معلومات%20درکار%20ہیں۔" target="_blank" class="btn btn-whatsapp">📱 واٹس ایپ پر رابطہ کریں (03422477885)</a>
+    </div>
+
     <div class="box">
       <div class="box-title">📲 رائیڈ آفر پوسٹ کریں</div>
       <label>آپ کا نام</label><input type="text" id="pname" placeholder="مثال: احمد خان">
@@ -84,7 +92,7 @@
       <div class="fare-box">
         <div class="fare-title">💰 کرایہ کی پیشکش / آفر (کم از کم 100 روپے)</div>
         <div id="fareshow" class="fare-display">Rs 300</div>
-        <input type="range" id="farerange" min="100" max="5000" step="50" value="300">
+        <input type="range" id="farerange" min="100" max="10000" step="50" value="300">
         <input type="number" id="farenum" value="300" min="100" style="text-align:center; font-weight:bold; margin-top:5px;">
       </div>
       <button class="btn btn-green" id="btnBook">رائیڈ آفر پوسٹ کریں (LIVE)</button>
@@ -123,6 +131,13 @@
 
   <!-- ڈرائیور ٹیب -->
   <div id="driverTab" class="hidden">
+    <!-- واٹس ایپ رابطہ کا بٹن -->
+    <div class="box" style="text-align: center; background: #f0fdf4;">
+      <div class="box-title" style="text-align: right;">💬 واٹس ایپ سپورٹ</div>
+      <p style="font-size: 13px; margin-bottom: 8px; color: #166534;">کسی بھی قسم کی معلومات یا مدد کیلئے ہمارے واٹس ایپ نمبر پر رابطہ کریں</p>
+      <a href="https://wa.me/923422477885?text=سلام!%20بطور%20ڈرائیور%20مجھے%20CCab%20کے%20متعلق%20معلومات%20درکار%20ہیں۔" target="_blank" class="btn btn-whatsapp">📱 واٹس ایپ پر رابطہ کریں (03422477885)</a>
+    </div>
+
     <div class="box">
       <div class="box-title">🚗 ڈرائیور رجسٹریشن و آن/آف سٹیٹس</div>
       <label>ڈرائیور کا نام *</label><input type="text" id="dname" placeholder="محمد علی">
@@ -148,11 +163,11 @@
     <div class="box">
       <div class="box-title">🗺️ اپنی مرضی کا روٹ اور ٹائم شیڈول پوسٹ کریں</div>
       <label>شروعاتی مقام (کہاں سے)</label>
-      <input type="text" id="dsFrom" placeholder="مثال: بصیرپور اڈا">
+      <input type="text" id="dsFrom" placeholder="مثال: بصیرپور اڈا / فیصل آباد">
       <label>آخری منزل (کہاں تک)</label>
-      <input type="text" id="dsTo" placeholder="مثال: اوکاڑہ / لاہور">
+      <input type="text" id="dsTo" placeholder="مثال: لاہور / ملتان / اسلام آباد">
       <label>تجویز کردہ درمیانی اسٹاپس (اگر ہوں)</label>
-      <input type="text" id="dsStops" placeholder="مثال: حجرہ شاہ مقیم، دیپالپور">
+      <input type="text" id="dsStops" placeholder="مثال: ساہیوال، اوکاڑہ">
       <label>روانہ ہونے کا وقت اور تاریخ</label>
       <input type="datetime-local" id="dsTime">
       <label>کرایہ فی سواری / کل کرایہ (روپے)</label>
@@ -213,20 +228,22 @@ const db = getDatabase(app);
 const SECURE_ADMIN_PASS = "ccab6974";
 
 const locations = [
-  "Basirpur بصیرپور", "Ganda Singh گنڈا سنگھ", "Tahir Kalan طاہرکلاں", "Wanan Wala ونانوالہ", 
-  "Muhammad Nagar محمد نگر", "Tahir Khurd طاہر خورد", "Kot Sher Khan کوٹ شیر خان", "Chak 8/D چک 8 ڈی", 
-  "Kalasan Hameed کلاسن حمید", "Nihal Mahar نہال مہار", "Rohela Tejeka روہیلہ تیجیکا", "Ameera Tejeka امیرا تیجیکا", 
-  "Qasim Ke قاسم کے", "Mahar Daim Ke Mahar مہار دائم کے مہار", "Azam Chowk اعظم چوک", "Qari Chowk قاری چوک", 
-  "Chah Chowki Wala چاہ چوکی والا", "Manah Khagah منہ کھگھہ", "Chowk Hafiz Lal چوک حافظ لال", "Chak Hafiz چک حافظ", 
-  "Lal Lalu لال لالو", "Gadar Rahman گدڑ رحمان", "Saonka سائونکا", "Batak Lali Ke بٹک للی کے", 
-  "Shahamand شہامند", "Bharpur Shah بھرپور شاہ", "Dighi Ahmed Yar ڈگھی احمد یار", "Lari Adda Basirpur لاری اڈا", 
-  "Railway Station ریلوے اسٹیشن", "Mohalla Dars محلہ درس", "Allama Iqbal Town علامہ اقبال ٹائون", 
-  "Gali Postmaster والی گلی", "Ghaus Pura غوث پورہ", "Tariq Pura طارق پورہ", "Thokar Gamman ٹھوکر گاماں", 
-  "Chak Ahmed Shah چک احمد شاہ", "Chak Ibrahim چک ابراہیم", "Petrol Pump پٹرول پمپ", "Khole Mureed کھولے مرید", 
-  "Khole Jaimil کھولے جیمل", "Sohag Pul سہاگ پل", "Chak Bota چک بوٹا", "Mahboob Shah محبوب شاہ", 
-  "Gilani Chowk گیلانی چوک", "Mohalla Exchange ایکسچینج", 
-  "Depalpur دیپالپور", "Hujra Shah Muqaam حجرہ شاہ مقیم", "Haveli Lakha حویلی لکھا", "Okara اوکاڑہ", 
-  "Mandi Ahmad Abad منڈی احمد آباد", "Sahiwal ساہیوال", "Kasur قصور", "Lahore لاہور"
+  "Basirpur بصیرپور", "Faisalabad فیصل آباد", "Multan ملتان", "Gujranwala گوجرانوالہ", 
+  "Rawalpindi راولپنڈی", "Islamabad اسلام آباد", "Ganda Singh گنڈا سنگھ", "Tahir Kalan طاہرکلاں", 
+  "Wanan Wala ونانوالہ", "Muhammad Nagar محمد نگر", "Tahir Khurd طاہر خورد", "Kot Sher Khan کوٹ شیر خان", 
+  "Chak 8/D چک 8 ڈی", "Kalasan Hameed کلاسن حمید", "Nihal Mahar نہال مہار", "Rohela Tejeka روہیلہ تیجیکا", 
+  "Ameera Tejeka امیرا تیجیکا", "Qasim Ke قاسم کے", "Mahar Daim Ke Mahar مہار دائم کے مہار", 
+  "Azam Chowk اعظم چوک", "Qari Chowk قاری چوک", "Chah Chowki Wala چاہ چوکی والا", "Manah Khagah منہ کھگھہ", 
+  "Chowk Hafiz Lal چوک حافظ لال", "Chak Hafiz چک حافظ", "Lal Lalu لال لالو", "Gadar Rahman گدڑ رحمان", 
+  "Saonka سائونکا", "Batak Lali Ke بٹک للی کے", "Shahamand شہامند", "Bharpur Shah بھرپور شاہ", 
+  "Dighi Ahmed Yar ڈگھی احمد یار", "Lari Adda Basirpur لاری اڈا", "Railway Station ریلوے اسٹیشن", 
+  "Mohalla Dars محلہ درس", "Allama Iqbal Town علامہ اقبال ٹائون", "Gali Postmaster والی گلی", 
+  "Ghaus Pura غوث پورہ", "Tariq Pura طارق پورہ", "Thokar Gamman ٹھوکر گاماں", "Chak Ahmed Shah چک احمد شاہ", 
+  "Chak Ibrahim چک ابراہیم", "Petrol Pump پٹرول پمپ", "Khole Mureed کھولے مرید", "Khole Jaimil کھولے جیمل", 
+  "Sohag Pul سہاگ پل", "Chak Bota چک بوٹا", "Mahboob Shah محبوب شاہ", "Gilani Chowk گیلانی چوک", 
+  "Mohalla Exchange ایکسچینج", "Depalpur دیپالپور", "Hujra Shah Muqaam حجرہ شاہ مقیم", 
+  "Haveli Lakha حویلی لکھا", "Okara اوکاڑہ", "Mandi Ahmad Abad منڈی احمد آباد", "Sahiwal ساہیوال", 
+  "Kasur قصور", "Lahore لاہور"
 ];
 
 function populateSelects() {
